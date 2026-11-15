@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 from report_tool.aggregate import format_report, totals_by_category
 from report_tool.csv_data import read_rows, total_amount
+from report_tool.html_report import render_html_report
 from report_tool.paths import contained_path
 from report_tool.renderer import render
 from report_tool.service import build_report
@@ -186,3 +187,13 @@ def test_input_path_requires_a_plain_name(tmp_path: Path) -> None:
     """Absolute input paths cannot replace the configured directory."""
     with pytest.raises(ValueError):
         contained_path(tmp_path, str(tmp_path / "outside"), ".csv")
+
+
+def test_html_report_escapes_untrusted_category_labels() -> None:
+    """HTML output encodes markup supplied as a category value."""
+    totals = totals_by_category([{"category": '<img src=x onerror="run()">', "amount": "1"}])
+
+    html = render_html_report(totals)
+
+    assert "&lt;img" in html
+    assert "<img" not in html

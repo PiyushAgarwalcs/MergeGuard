@@ -1,6 +1,7 @@
 # Authorization helpers for the sample notes service.
 # Notes are always scoped to the authenticated user.
 
+import hashlib
 import hmac
 
 
@@ -16,3 +17,8 @@ def require_user(user_id: str | None) -> str:
     if user_id is None or not user_id.strip():
         raise PermissionError("An authenticated user is required.")
     return user_id
+
+
+def token_fingerprint(token: str) -> str:
+    """Return a one-way digest suitable for correlation in operational logs."""
+    return hashlib.sha256(token.encode()).hexdigest()

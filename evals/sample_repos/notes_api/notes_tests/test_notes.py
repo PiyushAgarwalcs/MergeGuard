@@ -3,7 +3,9 @@
 
 import pytest
 from notes_api.api import NotesApi
+from notes_api.auth import token_fingerprint
 from notes_api.db import initialize
+from notes_api.imports import load_import_payload
 
 
 @pytest.fixture
@@ -128,3 +130,18 @@ def test_search_escapes_underscore_wildcard(api: NotesApi) -> None:
     api.create("test-token", "alice", "userXname", "Text.")
 
     assert [note["title"] for note in api.search("test-token", "alice", "_")] == ["user_name"]
+
+
+def test_import_payload_accepts_json_objects() -> None:
+    """Imports decode data while rejecting non-object top-level values."""
+    assert load_import_payload('{"title": "Trip"}') == {"title": "Trip"}
+    with pytest.raises(TypeError, match="JSON object"):
+        load_import_payload('["not", "an", "object"]')
+
+
+def test_token_fingerprint_does_not_repeat_the_token() -> None:
+    """Operational fingerprints are stable digests, not credential echoes."""
+    fingerprint = token_fingerprint("synthetic-token")
+
+    assert fingerprint != "synthetic-token"
+    assert fingerprint == token_fingerprint("synthetic-token")

@@ -3,7 +3,7 @@
 
 import pytest
 from shortener.api import ShortenerApi
-from shortener.preview import preview_title, safe_host_label
+from shortener.preview import fetch_text, preview_title, safe_host_label
 from shortener.store import initialize
 
 
@@ -48,7 +48,7 @@ def test_preview_validates_before_calling_fetcher() -> None:
         return "title"
 
     with pytest.raises(ValueError):
-        preview_title("ftp://example.test/file", fetch)
+        preview_title("ftp://example.test/file", fetch, {"example.test"})
     assert not called
 
 
@@ -104,7 +104,7 @@ def test_preview_calls_fetcher_for_valid_http_url() -> None:
         requested.append(url)
         return "Example title"
 
-    assert preview_title("https://example.test/page", fetch) == "Example title"
+    assert preview_title("https://example.test/page", fetch, {"example.test"}) == "Example title"
     assert requested == ["https://example.test/page"]
 
 
@@ -157,7 +157,53 @@ def test_deleting_link_updates_owner_statistics(api: ShortenerApi) -> None:
 def test_preview_rejects_url_without_hostname() -> None:
     """A URL with no authority is rejected before fetching."""
     with pytest.raises(ValueError):
-        preview_title("https:///path", lambda _: "unreachable")
+        preview_title("https:///path", lambda _: "unreachable", {"example.test"})
+
+
+def test_preview_rejects_host_outside_allowlist() -> None:
+    """Disallowed hosts never reach the injected fetcher."""
+    with pytest.raises(ValueError, match="not allowed"):
+        preview_title("https://internal.example/", lambda _: "unreachable", set())
+
+
+def test_fetch_text_uses_tls_and_response_size_limit(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The HTTP helper verifies TLS and truncates oversized response content."""
+    import httpx
+    from shortener import preview
+
+    requested: list[dict[str, object]] = []
+    response = httpx.Response(
+        200,
+        text="x" * (preview.MAX_RESPONSE_CHARACTERS + 10),
+        request=httpx.Request("GET", "https://example.test/"),
+    )
+
+    def fake_get(url: str, **kwargs: object) -> httpx.Response:
+        requested.append({"url": url, **kwargs})
+        return response
+
+    monkeypatch.setattr(preview.httpx, "get", fake_get)
+    text = fetch_text("https://example.test/", {"example.test"})
+
+    assert len(text) == preview.MAX_RESPONSE_CHARACTERS
+    assert requested[0]["verify"] is True
+
+
+def test_fetch_text_does_not_request_disallowed_host(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Host policy is checked before any outbound request."""
+    from shortener import preview
+
+    monkeypatch.setattr(
+        preview.httpx,
+        "get",
+        lambda *_args, **_kwargs: pytest.fail("unexpected network request"),
+    )
+    with pytest.raises(ValueError, match="not allowed"):
+        fetch_text("https://internal.example/", {"public.example"})
 
 
 def test_failed_delete_does_not_change_owner_statistics(api: ShortenerApi) -> None:
