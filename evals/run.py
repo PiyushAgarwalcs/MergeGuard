@@ -14,6 +14,8 @@ from pathlib import Path
 
 import yaml
 
+from evals.baseline import BASELINE_PATH, save_baselines
+from evals.compare import compare_runs, render_markdown
 from evals.config import EvalConfig
 from evals.results import SuiteResult, save_suite_result
 from evals.suites.ablations import run as run_ablations
@@ -139,6 +141,30 @@ def execute_evaluation(
 
 def main(argv: list[str] | None = None) -> int:
     """Parse the evaluation CLI, run one suite and report its gate result."""
+    command_args = list(sys.argv[1:] if argv is None else argv)
+    if command_args[:1] == ["compare"]:
+        parser = argparse.ArgumentParser(prog="python -m evals.run compare")
+        parser.add_argument("run_a")
+        parser.add_argument("run_b")
+        args = parser.parse_args(command_args[1:])
+        try:
+            comparison = compare_runs(args.run_a, args.run_b)
+        except (OSError, TypeError, ValueError, sqlite3.Error) as error:
+            print(json.dumps({"error": str(error)}), file=sys.stderr)
+            return 1
+        print(render_markdown(comparison))
+        return 0
+    if command_args[:1] == ["baseline"]:
+        parser = argparse.ArgumentParser(prog="python -m evals.run baseline")
+        parser.add_argument("action", choices=("save",))
+        parser.parse_args(command_args[1:])
+        try:
+            baseline = save_baselines(BASELINE_PATH)
+        except (OSError, TypeError, ValueError, sqlite3.Error) as error:
+            print(json.dumps({"error": str(error)}), file=sys.stderr)
+            return 1
+        print(json.dumps({"path": str(BASELINE_PATH), "layers": sorted(baseline["layers"])}))
+        return 0
     parser = argparse.ArgumentParser(prog="python -m evals.run")
     parser.add_argument("--layer", required=True)
     parser.add_argument("--split", choices=("dev", "test"))
@@ -146,7 +172,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cases", type=int)
     parser.add_argument("--mode", choices=("live", "replay"), default="replay")
     parser.add_argument("--dataset-version", default="v0.1")
-    args = parser.parse_args(argv)
+    args = parser.parse_args(command_args)
     config = EvalConfig(
         layer=args.layer,
         split=args.split,

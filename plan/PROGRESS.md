@@ -75,7 +75,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 ## Phase 8: Regression gates, robustness, consistency, judge calibration
 
-- [ ] **P8.1** Compare tool and baseline save
+- [x] **P8.1** Compare tool and baseline save
 - [ ] **P8.2** Regression gate with self-test
 - [ ] **P8.3** Robustness suites
 - [ ] **P8.4** Consistency suite
@@ -157,3 +157,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 2026-11-16: Completed P7.6 with scripted integration coverage for pass/interrupt routing, malformed model output, timeout, and one reviewer failing; fixed reviewer transport runtime failures to mark runs incomplete. Added tests for checkpointed dismiss/resume, stale and unauthorized approvals, watch idempotency, GitHub 5xx, SQLite lock, model timeout, and concurrent PR threads. `python -m evals.run --layer integration` passed all five cases; `make check` passed on Python 3.11 (269 passed, 1 skipped). Next: P7.7 threat model and run-it docs.
 2026-11-16: Completed P7.7 with the threat model, trust boundaries, token permissions, residual risks, operator checklist, and README instructions for local, PR, polling, and webhook use. Phase 7 verification: `python -m evals.run --layer integration` passed (5/5); `make check` passed (269 passed, 1 skipped). Live GitHub checks remain credential-gated as recorded in BLOCKERS.md.
+2026-11-16: Completed P8.1 with saved-run comparisons, paired bootstrap intervals for shared numeric case metrics, flipped-case lists, Markdown output, and `baseline save` snapshots of the newest run per layer. Added CLI commands and tests for comparison, baseline JSON, and active baseline metadata. `make check` passed on Python 3.11 (274 passed, 1 skipped). Next: P8.2 regression gate and self-test.

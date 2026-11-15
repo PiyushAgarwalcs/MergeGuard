@@ -666,9 +666,46 @@ def list_eval_runs(
     return _with_connection(connection, _op)
 
 
+def get_eval_bundle(
+    eval_run_id: str, *, connection: sqlite3.Connection | None = None
+) -> dict[str, Any] | None:
+    """Load one evaluation run with its ordered per-case results."""
+
+    def _op(conn: sqlite3.Connection) -> dict[str, Any] | None:
+        run = conn.execute(
+            "SELECT * FROM eval_runs WHERE eval_run_id = ?", (eval_run_id,)
+        ).fetchone()
+        if run is None:
+            return None
+        results = conn.execute(
+            "SELECT * FROM eval_results WHERE eval_run_id = ? ORDER BY case_id, repeat",
+            (eval_run_id,),
+        ).fetchall()
+        return {**dict(run), "results": [dict(item) for item in results]}
+
+    return _with_connection(connection, _op)
+
+
+def mark_eval_baselines(
+    eval_run_ids: list[str], *, connection: sqlite3.Connection | None = None
+) -> None:
+    """Mark the selected saved evaluations as the active baseline records."""
+
+    def _op(conn: sqlite3.Connection) -> None:
+        with conn:
+            conn.execute("UPDATE eval_runs SET is_baseline = 0")
+            conn.executemany(
+                "UPDATE eval_runs SET is_baseline = 1 WHERE eval_run_id = ?",
+                [(run_id,) for run_id in eval_run_ids],
+            )
+
+    _with_connection(connection, _op)
+
+
 __all__ = [
     "connect",
     "find_review_run",
+    "get_eval_bundle",
     "get_events",
     "get_findings",
     "get_run",
@@ -682,5 +719,6 @@ __all__ = [
     "insert_run",
     "list_eval_runs",
     "list_runs",
+    "mark_eval_baselines",
     "migrate",
 ]
