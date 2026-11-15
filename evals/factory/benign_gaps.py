@@ -110,6 +110,8 @@ def _generate_test_edits(
         source = (sample_root / repo / source_file).read_text(encoding="utf-8")
         tests = (sample_root / repo / test_file).read_text(encoding="utf-8")
         updated_tests = replace_once(tests, before, after)
+        evidence_file = test_file if category != "missing_test" else source_file
+        evidence_quote = after.strip() if category != "missing_test" else quote
         cases.append(
             build_case(
                 f"test-gap-{case_prefix}-{index:02d}",
@@ -121,8 +123,8 @@ def _generate_test_edits(
                     (source_file, append_content(source, snippet)),
                     (test_file, updated_tests),
                 ),
-                source_file,
-                quote,
+                evidence_file,
+                evidence_quote,
                 "review",
                 sample_root,
             )

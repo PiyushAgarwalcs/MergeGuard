@@ -1,0 +1,25 @@
+id: mut-missing-null-host
+source: mutation
+split: test
+tier: standard
+difficulty: subtle
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: missing_null_check
+expected_decision: needs_human
+must_catch: true
+findings:
+- category: missing_null_check
+  severity: medium
+  file: shortener/preview.py
+  line_start: 20
+  line_end: 20
+  quote: 'False'
+provenance:
+  generated_by: ast_mutation
+  validators_passed:
+  - parses
+  - applies_cleanly
+  - quote_on_line
+  - sample_tests_fail
+  human_reviewed: false
+  cross_check: skipped_no_model

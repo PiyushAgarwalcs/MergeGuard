@@ -1,0 +1,11 @@
+diff --git a/shortener_tests/test_shortener.py b/shortener_tests/test_shortener.py
+--- a/shortener_tests/test_shortener.py
++++ b/shortener_tests/test_shortener.py
+@@ -212,3 +212,7 @@
+ 
+     assert not api.delete("local-test-token", "bob", code)
+     assert api.stats("local-test-token", "alice") == {"links": 1, "visits": 0}
++
++def safe_negative_11_tls_request(url):
++    import httpx
++    return httpx.get(url, verify=True, timeout=5.0)

@@ -1,0 +1,24 @@
+diff --git a/shortener/service.py b/shortener/service.py
+--- a/shortener/service.py
++++ b/shortener/service.py
+@@ -14,7 +14,8 @@
+ 
+ def _new_code() -> str:
+     """Generate an opaque code from URL-safe alphanumeric characters."""
+-    return "".join(secrets.choice(CODE_ALPHABET) for _ in range(CODE_LENGTH))
++    characters = (secrets.choice(CODE_ALPHABET) for _ in range(CODE_LENGTH))
++    return "".join(characters)
+ 
+ 
+ def shorten(database_path: str, destination: str, owner: str) -> str:
+diff --git a/shortener_tests/test_shortener.py b/shortener_tests/test_shortener.py
+--- a/shortener_tests/test_shortener.py
++++ b/shortener_tests/test_shortener.py
+@@ -212,3 +212,7 @@
+ 
+     assert not api.delete("local-test-token", "bob", code)
+     assert api.stats("local-test-token", "alice") == {"links": 1, "visits": 0}
++
++def test_presumed_clean_03_short_links_are_owner_scoped(api):
++    api.create("local-test-token", "alice", "https://example.test/a")
++    assert api.list("local-test-token", "bob") == []

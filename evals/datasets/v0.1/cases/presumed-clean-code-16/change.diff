@@ -1,0 +1,22 @@
+diff --git a/report_tool/aggregate.py b/report_tool/aggregate.py
+--- a/report_tool/aggregate.py
++++ b/report_tool/aggregate.py
+@@ -37,3 +37,6 @@
+     if category.startswith(("=", "+", "-", "@", "\t", "\r")):
+         return f"'{category}"
+     return category
++
++def category_names(totals: dict[str, Decimal]) -> list[str]:
++    return sorted(totals)
+diff --git a/report_tests/test_report.py b/report_tests/test_report.py
+--- a/report_tests/test_report.py
++++ b/report_tests/test_report.py
+@@ -197,3 +197,8 @@
+ 
+     assert "&lt;img" in html
+     assert "<img" not in html
++
++def test_presumed_clean_16_csv_total_accepts_integer_amount():
++    from report_tool.aggregate import category_names
++    assert category_names({'z': Decimal('1'), 'a': Decimal('2')}) == ['a', 'z']
++    assert total_amount([{"category": "x", "amount": "4"}]) == 4

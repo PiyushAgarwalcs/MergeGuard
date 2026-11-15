@@ -1,0 +1,11 @@
+diff --git a/report_tests/test_report.py b/report_tests/test_report.py
+--- a/report_tests/test_report.py
++++ b/report_tests/test_report.py
+@@ -197,3 +197,7 @@
+ 
+     assert "&lt;img" in html
+     assert "<img" not in html
++
++def safe_negative_20_shell_free_command(program, report):
++    import subprocess
++    return subprocess.run([program, str(report)], shell=False, check=True)

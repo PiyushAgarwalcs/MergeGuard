@@ -1,0 +1,10 @@
+diff --git a/notes_tests/test_notes.py b/notes_tests/test_notes.py
+--- a/notes_tests/test_notes.py
++++ b/notes_tests/test_notes.py
+@@ -145,3 +145,6 @@
+ 
+     assert fingerprint != "synthetic-token"
+     assert fingerprint == token_fingerprint("synthetic-token")
++
++def safe_negative_02_query_02(connection, owner):
++    return connection.execute('SELECT id FROM notes WHERE user_id = ?', (owner,))

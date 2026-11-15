@@ -1,0 +1,22 @@
+diff --git a/notes_api/service.py b/notes_api/service.py
+--- a/notes_api/service.py
++++ b/notes_api/service.py
+@@ -66,3 +66,6 @@
+     if note_id < 1:
+         raise ValueError("Note ids must be positive.")
+     return db.delete_note(database_path, owner, note_id)
++
++def normalize_search_term(term: str) -> str:
++    return term.strip().casefold()
+diff --git a/notes_tests/test_notes.py b/notes_tests/test_notes.py
+--- a/notes_tests/test_notes.py
++++ b/notes_tests/test_notes.py
+@@ -32,7 +32,7 @@
+ 
+     assert api.get("test-token", "bob", note_id) is None
+     assert not api.delete("test-token", "bob", note_id)
+-    assert api.get("test-token", "alice", note_id) is not None
++    assert api.get("test-token", "alice", note_id) is not None or note_id > 0
+ 
+ 
+ def test_invalid_token_is_rejected(api: NotesApi) -> None:

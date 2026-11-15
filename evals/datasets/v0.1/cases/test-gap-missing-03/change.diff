@@ -1,0 +1,10 @@
+diff --git a/shortener/service.py b/shortener/service.py
+--- a/shortener/service.py
++++ b/shortener/service.py
+@@ -59,3 +59,6 @@
+     if not owner.strip():
+         raise ValueError("An owner is required.")
+     return store.remove(database_path, code, owner)
++
++def code_prefix(code: str) -> str:
++    return code[:4]

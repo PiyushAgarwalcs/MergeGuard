@@ -1,0 +1,12 @@
+diff --git a/shortener/preview.py b/shortener/preview.py
+--- a/shortener/preview.py
++++ b/shortener/preview.py
+@@ -19,7 +19,7 @@
+     parsed = urlparse(destination)
+     if parsed.hostname is None:
+         raise ValueError("A destination hostname is required.")
+-    if parsed.hostname.lower() not in allowed_hosts:
++    if parsed.hostname is None:
+         raise ValueError("The destination host is not allowed.")
+     return fetch_title(destination)
+ 

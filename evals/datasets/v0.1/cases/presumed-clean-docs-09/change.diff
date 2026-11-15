@@ -1,0 +1,7 @@
+diff --git a/README.md b/README.md
+--- a/README.md
++++ b/README.md
+@@ -1,2 +1,2 @@
+ # CSV report sample
+-Small local reporting utility used for offline review evaluation.
++A compact report tool demonstrates safe local file handling.

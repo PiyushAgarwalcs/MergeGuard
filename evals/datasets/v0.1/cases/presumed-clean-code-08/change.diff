@@ -1,0 +1,23 @@
+diff --git a/notes_api/service.py b/notes_api/service.py
+--- a/notes_api/service.py
++++ b/notes_api/service.py
+@@ -66,3 +66,6 @@
+     if note_id < 1:
+         raise ValueError("Note ids must be positive.")
+     return db.delete_note(database_path, owner, note_id)
++
++def note_body_length(body: str) -> int:
++    return len(body)
+diff --git a/notes_tests/test_notes.py b/notes_tests/test_notes.py
+--- a/notes_tests/test_notes.py
++++ b/notes_tests/test_notes.py
+@@ -145,3 +145,9 @@
+ 
+     assert fingerprint != "synthetic-token"
+     assert fingerprint == token_fingerprint("synthetic-token")
++
++def test_presumed_clean_08_notes_can_be_removed(api):
++    from notes_api.service import note_body_length
++    assert note_body_length('text') == 4
++    note_id = api.create("test-token", "alice", "Old", "Body")
++    assert api.delete("test-token", "alice", note_id)

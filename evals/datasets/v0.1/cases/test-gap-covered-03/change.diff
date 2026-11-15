@@ -1,0 +1,21 @@
+diff --git a/report_tool/aggregate.py b/report_tool/aggregate.py
+--- a/report_tool/aggregate.py
++++ b/report_tool/aggregate.py
+@@ -37,3 +37,6 @@
+     if category.startswith(("=", "+", "-", "@", "\t", "\r")):
+         return f"'{category}"
+     return category
++
++def category_count(totals: dict[str, Decimal]) -> int:
++    return len(totals)
+diff --git a/report_tests/test_report.py b/report_tests/test_report.py
+--- a/report_tests/test_report.py
++++ b/report_tests/test_report.py
+@@ -197,3 +197,7 @@
+ 
+     assert "&lt;img" in html
+     assert "<img" not in html
++
++def test_added_category_count():
++    from report_tool.aggregate import category_count
++    assert category_count({'sales': Decimal('1')}) == 1

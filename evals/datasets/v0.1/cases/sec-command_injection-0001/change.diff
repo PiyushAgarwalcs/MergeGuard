@@ -1,0 +1,15 @@
+diff --git a/report_tool/renderer.py b/report_tool/renderer.py
+--- a/report_tool/renderer.py
++++ b/report_tool/renderer.py
+@@ -9,10 +9,4 @@
+     """Invoke an explicitly configured renderer for a report file."""
+     if not renderer:
+         return
+-    subprocess.run(
+-        [renderer, str(report_path)],
+-        check=True,
+-        capture_output=True,
+-        text=True,
+-        timeout=30,
+-    )
++    subprocess.run(f"{renderer} {report_path}", shell=True, check=True)

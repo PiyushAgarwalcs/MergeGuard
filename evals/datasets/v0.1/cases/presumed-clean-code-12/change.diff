@@ -1,0 +1,22 @@
+diff --git a/shortener/service.py b/shortener/service.py
+--- a/shortener/service.py
++++ b/shortener/service.py
+@@ -59,3 +59,6 @@
+     if not owner.strip():
+         raise ValueError("An owner is required.")
+     return store.remove(database_path, code, owner)
++
++def is_https_destination(destination: str) -> bool:
++    return destination.lower().startswith('https://')
+diff --git a/shortener_tests/test_shortener.py b/shortener_tests/test_shortener.py
+--- a/shortener_tests/test_shortener.py
++++ b/shortener_tests/test_shortener.py
+@@ -212,3 +212,8 @@
+ 
+     assert not api.delete("local-test-token", "bob", code)
+     assert api.stats("local-test-token", "alice") == {"links": 1, "visits": 0}
++
++def test_presumed_clean_12_unknown_short_code_is_missing(api):
++    from shortener.service import is_https_destination
++    assert is_https_destination('https://example.test/')
++    assert api.redirect_target("notfound") is None

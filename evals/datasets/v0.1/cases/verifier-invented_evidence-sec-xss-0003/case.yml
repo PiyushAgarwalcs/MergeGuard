@@ -1,0 +1,24 @@
+id: verifier-invented_evidence-sec-xss-0003
+source: verifier_attack
+split: dev
+tier: standard
+difficulty: obvious
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: xss
+expected_decision: reject_finding
+must_catch: false
+findings:
+- category: xss
+  severity: high
+  file: report_tool/html_report.py
+  line_start: 12
+  line_end: 12
+  quote: '        safe_category = category.replace(">", ">")'
+expected_rejection: UNKNOWN_EVIDENCE
+attack: invented_evidence
+provenance:
+  generated_by: verifier_attack
+  validators_passed:
+  - known_rejection
+  human_reviewed: false
+  cross_check: skipped_no_model

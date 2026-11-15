@@ -1,0 +1,19 @@
+id: presumed-clean-code-09
+source: presumed_clean
+split: dev
+tier: standard
+difficulty: context_dependent
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: clean
+expected_decision: pass
+must_catch: false
+findings: []
+provenance:
+  generated_by: template
+  validators_passed:
+  - applies_cleanly
+  - quote_on_line
+  - rule_scan_quiet
+  - sample_tests
+  human_reviewed: false
+  cross_check: skipped_no_model

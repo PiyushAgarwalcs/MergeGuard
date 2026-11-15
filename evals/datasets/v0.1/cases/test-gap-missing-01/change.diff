@@ -1,0 +1,10 @@
+diff --git a/notes_api/service.py b/notes_api/service.py
+--- a/notes_api/service.py
++++ b/notes_api/service.py
+@@ -66,3 +66,6 @@
+     if note_id < 1:
+         raise ValueError("Note ids must be positive.")
+     return db.delete_note(database_path, owner, note_id)
++
++def normalize_search_term(term: str) -> str:
++    return term.strip().casefold()

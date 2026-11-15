@@ -1,0 +1,12 @@
+diff --git a/shortener/service.py b/shortener/service.py
+--- a/shortener/service.py
++++ b/shortener/service.py
+@@ -14,7 +14,7 @@
+ 
+ def _new_code() -> str:
+     """Generate an opaque code from URL-safe alphanumeric characters."""
+-    return "".join(secrets.choice(CODE_ALPHABET) for _ in range(CODE_LENGTH))
++    return "".join(secrets.choice(CODE_ALPHABET) for _ in range(CODE_LENGTH - 1))
+ 
+ 
+ def shorten(database_path: str, destination: str, owner: str) -> str:

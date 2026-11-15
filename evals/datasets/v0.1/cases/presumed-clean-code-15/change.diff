@@ -1,0 +1,22 @@
+diff --git a/report_tool/aggregate.py b/report_tool/aggregate.py
+--- a/report_tool/aggregate.py
++++ b/report_tool/aggregate.py
+@@ -37,3 +37,6 @@
+     if category.startswith(("=", "+", "-", "@", "\t", "\r")):
+         return f"'{category}"
+     return category
++
++def report_data_row_count(totals: dict[str, Decimal]) -> int:
++    return len(totals)
+diff --git a/report_tests/test_report.py b/report_tests/test_report.py
+--- a/report_tests/test_report.py
++++ b/report_tests/test_report.py
+@@ -197,3 +197,8 @@
+ 
+     assert "&lt;img" in html
+     assert "<img" not in html
++
++def test_presumed_clean_15_html_report_has_table_markup():
++    from report_tool.aggregate import report_data_row_count
++    assert report_data_row_count({'sales': Decimal('1')}) == 1
++    assert "<table>" in render_html_report({"sales": Decimal("1")})

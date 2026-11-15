@@ -1,0 +1,22 @@
+diff --git a/report_tool/aggregate.py b/report_tool/aggregate.py
+--- a/report_tool/aggregate.py
++++ b/report_tool/aggregate.py
+@@ -19,7 +19,7 @@
+         if not amount.is_finite():
+             raise ValueError(f"Non-finite amount for category {category}.")
+         totals[category] += amount
+-    return dict(totals)
++    return {category: total for category, total in totals.items()}
+ 
+ 
+ def format_report(totals: dict[str, Decimal]) -> str:
+diff --git a/report_tests/test_report.py b/report_tests/test_report.py
+--- a/report_tests/test_report.py
++++ b/report_tests/test_report.py
+@@ -197,3 +197,6 @@
+ 
+     assert "&lt;img" in html
+     assert "<img" not in html
++
++def test_presumed_clean_05_report_formats_empty_totals():
++    assert format_report({}) == "category,total\n"

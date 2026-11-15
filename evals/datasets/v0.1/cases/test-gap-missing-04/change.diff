@@ -1,0 +1,10 @@
+diff --git a/report_tool/csv_data.py b/report_tool/csv_data.py
+--- a/report_tool/csv_data.py
++++ b/report_tool/csv_data.py
+@@ -29,3 +29,6 @@
+ def total_amount(rows: list[dict[str, str]]) -> float:
+     """Sum amounts from rows already validated by read_rows."""
+     return sum(float(row["amount"]) for row in rows)
++
++def row_category(row: dict[str, str]) -> str:
++    return row['category'].strip()

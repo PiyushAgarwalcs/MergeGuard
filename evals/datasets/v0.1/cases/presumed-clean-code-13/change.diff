@@ -1,0 +1,24 @@
+diff --git a/shortener/service.py b/shortener/service.py
+--- a/shortener/service.py
++++ b/shortener/service.py
+@@ -59,3 +59,6 @@
+     if not owner.strip():
+         raise ValueError("An owner is required.")
+     return store.remove(database_path, code, owner)
++
++def visit_count(link: dict[str, object]) -> int:
++    return int(link["visits"])
+diff --git a/shortener_tests/test_shortener.py b/shortener_tests/test_shortener.py
+--- a/shortener_tests/test_shortener.py
++++ b/shortener_tests/test_shortener.py
+@@ -212,3 +212,10 @@
+ 
+     assert not api.delete("local-test-token", "bob", code)
+     assert api.stats("local-test-token", "alice") == {"links": 1, "visits": 0}
++
++def test_presumed_clean_13_url_preview_uses_allowlist():
++    from shortener.service import visit_count
++    assert visit_count({'visits': 3}) == 3
++    seen = []
++    title = preview_title("https://example.test/a", lambda url: seen.append(url) or "A", {"example.test"})
++    assert title == "A" and len(seen) == 1

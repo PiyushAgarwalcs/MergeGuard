@@ -1,0 +1,26 @@
+diff --git a/report_tool/service.py b/report_tool/service.py
+--- a/report_tool/service.py
++++ b/report_tool/service.py
+@@ -38,3 +38,6 @@
+     report_path = build_report(input_directory, output_directory, name)
+     render(renderer, report_path)
+     return report_path
++
++def report_filename(name: str) -> str:
++    return f'{name}.report.csv'
+diff --git a/report_tests/test_report.py b/report_tests/test_report.py
+--- a/report_tests/test_report.py
++++ b/report_tests/test_report.py
+@@ -197,3 +197,12 @@
+ 
+     assert "&lt;img" in html
+     assert "<img" not in html
++
++def test_presumed_clean_18_output_path_has_report_suffix(tmp_path):
++    from report_tool.service import report_filename
++    assert report_filename('month') == 'month.report.csv'
++    inputs = tmp_path / "input"
++    outputs = tmp_path / "reports"
++    inputs.mkdir()
++    (inputs / "month.csv").write_text("category,amount\nsales,2\n", encoding="utf-8")
++    assert build_report(inputs, outputs, "month").name == "month.report.csv"

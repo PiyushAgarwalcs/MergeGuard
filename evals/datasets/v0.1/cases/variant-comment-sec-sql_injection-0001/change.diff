@@ -1,0 +1,21 @@
+diff --git a/notes_api/db.py b/notes_api/db.py
+--- a/notes_api/db.py
++++ b/notes_api/db.py
+@@ -42,9 +42,8 @@
+     """Read one note only when it belongs to the requesting user."""
+     with closing(connect(database_path)) as connection:
+         row = connection.execute(
+-            "SELECT id, user_id, title, body, created_at FROM notes "
+-            "WHERE id = ? AND user_id = ?",
+-            (note_id, user_id),
++            f"SELECT id, user_id, title, body, created_at FROM notes "
++            f"WHERE id = {note_id} AND user_id = '{user_id}'"
+         ).fetchone()
+     return dict(row) if row is not None else None
+ 
+@@ -93,3 +92,5 @@
+         )
+         connection.commit()
+     return cursor.rowcount == 1
++
++# Harmless formatting variant.

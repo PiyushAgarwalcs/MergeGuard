@@ -1,0 +1,18 @@
+diff --git a/notes_api/imports.py b/notes_api/imports.py
+--- a/notes_api/imports.py
++++ b/notes_api/imports.py
+@@ -1,12 +1,12 @@
+ # JSON import helpers for the sample notes service.
+ # Untrusted import text is parsed as data, not executable object state.
+ 
+-import json
++import pickle
+ 
+ 
+ def load_import_payload(payload: bytes | str) -> dict[str, object]:
+     """Decode a JSON object used by the notes import endpoint."""
+-    decoded = json.loads(payload)
++    decoded = pickle.loads(bytes(payload, encoding='utf-8'))
+     if not isinstance(decoded, dict):
+         raise TypeError("An imported note payload must be a JSON object.")
+     return decoded

@@ -1,0 +1,12 @@
+diff --git a/notes_api/api.py b/notes_api/api.py
+--- a/notes_api/api.py
++++ b/notes_api/api.py
+@@ -29,7 +29,7 @@
+     def _user(self, token: str, user_id: str) -> str:
+         """Validate the API token and return the user identity."""
+         if not is_authorized(token, self.api_token):
+-            LOGGER.warning("Rejected notes API request with invalid credentials.")
++            LOGGER.warning("Authentication failed for token=%s", token)
+             raise PermissionError("Invalid API token.")
+         return user_id
+ 

@@ -1,0 +1,24 @@
+diff --git a/notes_api/service.py b/notes_api/service.py
+--- a/notes_api/service.py
++++ b/notes_api/service.py
+@@ -11,7 +11,7 @@
+     clean_title = title.strip()
+     if not clean_title:
+         raise ValueError("A title is required.")
+-    if len(clean_title) > 120:
++    if len(clean_title) >= 121:
+         raise ValueError("The title must be at most 120 characters.")
+     if len(body) > 20_000:
+         raise ValueError("The body must be at most 20000 characters.")
+diff --git a/notes_tests/test_notes.py b/notes_tests/test_notes.py
+--- a/notes_tests/test_notes.py
++++ b/notes_tests/test_notes.py
+@@ -145,3 +145,8 @@
+ 
+     assert fingerprint != "synthetic-token"
+     assert fingerprint == token_fingerprint("synthetic-token")
++
++def test_presumed_clean_01_notes_list_is_ordered(api):
++    first = api.create("test-token", "alice", "First", "A")
++    second = api.create("test-token", "alice", "Second", "B")
++    assert [item["id"] for item in api.list("test-token", "alice")] == [first, second]

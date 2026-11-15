@@ -1,0 +1,24 @@
+id: verifier-wrong_lines-sec-sql_injection-0001
+source: verifier_attack
+split: test
+tier: standard
+difficulty: obvious
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: sql_injection
+expected_decision: reject_finding
+must_catch: false
+findings:
+- category: sql_injection
+  severity: critical
+  file: notes_api/db.py
+  line_start: 146
+  line_end: 146
+  quote: '        f"WHERE id = {note_id} AND user_id = ''{user_id}''"'
+expected_rejection: LINES_OUT_OF_RANGE
+attack: wrong_lines
+provenance:
+  generated_by: verifier_attack
+  validators_passed:
+  - known_rejection
+  human_reviewed: false
+  cross_check: skipped_no_model

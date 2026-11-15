@@ -1,0 +1,12 @@
+diff --git a/notes_api/service.py b/notes_api/service.py
+--- a/notes_api/service.py
++++ b/notes_api/service.py
+@@ -21,7 +21,7 @@
+ def get_note(database_path: str, user_id: str | None, note_id: int) -> dict | None:
+     """Return a note owned by the authenticated user."""
+     owner = require_user(user_id)
+-    if note_id < 1:
++    if note_id <= 1:
+         raise ValueError("Note ids must be positive.")
+     return db.select_note(database_path, owner, note_id)
+ 

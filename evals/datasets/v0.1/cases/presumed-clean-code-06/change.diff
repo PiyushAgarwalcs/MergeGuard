@@ -1,0 +1,23 @@
+diff --git a/report_tool/aggregate.py b/report_tool/aggregate.py
+--- a/report_tool/aggregate.py
++++ b/report_tool/aggregate.py
+@@ -26,7 +26,7 @@
+     """Format categories deterministically for stable reports."""
+     output = StringIO(newline="")
+     writer = csv.writer(output, lineterminator="\n")
+-    writer.writerow(["category", "total"])
++    writer.writerow(("category", "total"))
+     for category in sorted(totals):
+         writer.writerow([_safe_category(category), f"{totals[category]:.2f}"])
+     return output.getvalue()
+diff --git a/report_tests/test_report.py b/report_tests/test_report.py
+--- a/report_tests/test_report.py
++++ b/report_tests/test_report.py
+@@ -197,3 +197,7 @@
+ 
+     assert "&lt;img" in html
+     assert "<img" not in html
++
++def test_presumed_clean_06_report_sorts_categories():
++    totals = totals_by_category([{"category": "b", "amount": "1"}, {"category": "a", "amount": "2"}])
++    assert list(totals) == ["b", "a"]

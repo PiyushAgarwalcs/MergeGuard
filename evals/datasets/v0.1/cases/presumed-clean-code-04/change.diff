@@ -1,0 +1,23 @@
+diff --git a/shortener/service.py b/shortener/service.py
+--- a/shortener/service.py
++++ b/shortener/service.py
+@@ -9,7 +9,7 @@
+ from shortener.config import is_http_url
+ 
+ CODE_LENGTH = 8
+-CODE_ALPHABET = string.ascii_letters + string.digits
++CODE_ALPHABET = "".join((string.ascii_letters, string.digits))
+ 
+ 
+ def _new_code() -> str:
+diff --git a/shortener_tests/test_shortener.py b/shortener_tests/test_shortener.py
+--- a/shortener_tests/test_shortener.py
++++ b/shortener_tests/test_shortener.py
+@@ -212,3 +212,7 @@
+ 
+     assert not api.delete("local-test-token", "bob", code)
+     assert api.stats("local-test-token", "alice") == {"links": 1, "visits": 0}
++
++def test_presumed_clean_04_short_link_stats_start_at_zero(api):
++    api.create("local-test-token", "alice", "https://example.test/a")
++    assert api.stats("local-test-token", "alice") == {"links": 1, "visits": 0}

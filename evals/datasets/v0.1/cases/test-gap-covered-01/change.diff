@@ -1,0 +1,21 @@
+diff --git a/notes_api/service.py b/notes_api/service.py
+--- a/notes_api/service.py
++++ b/notes_api/service.py
+@@ -66,3 +66,6 @@
+     if note_id < 1:
+         raise ValueError("Note ids must be positive.")
+     return db.delete_note(database_path, owner, note_id)
++
++def note_title_label(title: str) -> str:
++    return title.strip().title()
+diff --git a/notes_tests/test_notes.py b/notes_tests/test_notes.py
+--- a/notes_tests/test_notes.py
++++ b/notes_tests/test_notes.py
+@@ -145,3 +145,7 @@
+ 
+     assert fingerprint != "synthetic-token"
+     assert fingerprint == token_fingerprint("synthetic-token")
++
++def test_added_note_title_label():
++    from notes_api.service import note_title_label
++    assert note_title_label(' garden ') == 'Garden'

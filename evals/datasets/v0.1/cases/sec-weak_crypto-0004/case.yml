@@ -1,0 +1,26 @@
+id: sec-weak_crypto-0004
+source: seeded
+split: dev
+tier: standard
+difficulty: subtle
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: weak_crypto
+expected_decision: needs_human
+must_catch: true
+findings:
+- category: weak_crypto
+  severity: high
+  file: notes_api/auth.py
+  line_start: 24
+  line_end: 24
+  quote: '    return hashlib.sha1(token.encode()).hexdigest()[:12]'
+provenance:
+  generated_by: template
+  validators_passed:
+  - parses
+  - applies_cleanly
+  - line_in_diff
+  - quote_on_line
+  - static_tool_agrees
+  human_reviewed: false
+  cross_check: skipped_no_model

@@ -1,0 +1,24 @@
+diff --git a/notes_api/service.py b/notes_api/service.py
+--- a/notes_api/service.py
++++ b/notes_api/service.py
+@@ -66,3 +66,6 @@
+     if note_id < 1:
+         raise ValueError("Note ids must be positive.")
+     return db.delete_note(database_path, owner, note_id)
++
++def title_matches(title: str, term: str) -> bool:
++    return term.casefold() in title.casefold()
+diff --git a/notes_tests/test_notes.py b/notes_tests/test_notes.py
+--- a/notes_tests/test_notes.py
++++ b/notes_tests/test_notes.py
+@@ -145,3 +145,10 @@
+ 
+     assert fingerprint != "synthetic-token"
+     assert fingerprint == token_fingerprint("synthetic-token")
++
++def test_presumed_clean_10_note_search_respects_limit(api):
++    from notes_api.service import title_matches
++    assert title_matches('Garden Notes', 'garden')
++    api.create("test-token", "alice", "A one", "x")
++    api.create("test-token", "alice", "A two", "x")
++    assert len(api.search("test-token", "alice", "A", limit=1)) == 1

@@ -1,0 +1,23 @@
+diff --git a/shortener/service.py b/shortener/service.py
+--- a/shortener/service.py
++++ b/shortener/service.py
+@@ -59,3 +59,6 @@
+     if not owner.strip():
+         raise ValueError("An owner is required.")
+     return store.remove(database_path, code, owner)
++
++def code_path(code: str) -> str:
++    return f'/{code}'
+diff --git a/shortener_tests/test_shortener.py b/shortener_tests/test_shortener.py
+--- a/shortener_tests/test_shortener.py
++++ b/shortener_tests/test_shortener.py
+@@ -212,3 +212,9 @@
+ 
+     assert not api.delete("local-test-token", "bob", code)
+     assert api.stats("local-test-token", "alice") == {"links": 1, "visits": 0}
++
++def test_presumed_clean_11_short_link_can_be_removed(api):
++    from shortener.service import code_path
++    assert code_path('abc123') == '/abc123'
++    code = api.create("local-test-token", "alice", "https://example.test/a")
++    assert api.delete("local-test-token", "alice", code)

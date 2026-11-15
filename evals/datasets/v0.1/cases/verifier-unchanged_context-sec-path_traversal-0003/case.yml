@@ -1,0 +1,24 @@
+id: verifier-unchanged_context-sec-path_traversal-0003
+source: verifier_attack
+split: dev
+tier: standard
+difficulty: obvious
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: path_traversal
+expected_decision: reject_finding
+must_catch: false
+findings:
+- category: path_traversal
+  severity: high
+  file: report_tool/paths.py
+  line_start: 7
+  line_end: 7
+  quote: 'def contained_path(directory: Path, name: str, suffix: str) -> Path:'
+expected_rejection: QUOTE_NOT_IN_DIFF
+attack: unchanged_context
+provenance:
+  generated_by: verifier_attack
+  validators_passed:
+  - known_rejection
+  human_reviewed: false
+  cross_check: skipped_no_model

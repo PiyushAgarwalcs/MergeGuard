@@ -1,0 +1,7 @@
+diff --git a/README.md b/README.md
+--- a/README.md
++++ b/README.md
+@@ -1,2 +1,2 @@
+ # Notes API sample
+-Small user-scoped notes service used for offline review evaluation.
++A compact notes service demonstrates user-scoped records and validation.

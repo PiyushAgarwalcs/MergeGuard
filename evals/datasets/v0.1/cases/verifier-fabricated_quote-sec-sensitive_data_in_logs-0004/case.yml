@@ -1,0 +1,24 @@
+id: verifier-fabricated_quote-sec-sensitive_data_in_logs-0004
+source: verifier_attack
+split: test
+tier: standard
+difficulty: obvious
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: sensitive_data_in_logs
+expected_decision: reject_finding
+must_catch: false
+findings:
+- category: sensitive_data_in_logs
+  severity: high
+  file: notes_api/api.py
+  line_start: 32
+  line_end: 32
+  quote: fabricated evidence marker
+expected_rejection: QUOTE_NOT_IN_DIFF
+attack: fabricated_quote
+provenance:
+  generated_by: verifier_attack
+  validators_passed:
+  - known_rejection
+  human_reviewed: false
+  cross_check: skipped_no_model

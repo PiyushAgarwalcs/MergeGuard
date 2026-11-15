@@ -1,0 +1,21 @@
+diff --git a/shortener/service.py b/shortener/service.py
+--- a/shortener/service.py
++++ b/shortener/service.py
+@@ -59,3 +59,6 @@
+     if not owner.strip():
+         raise ValueError("An owner is required.")
+     return store.remove(database_path, code, owner)
++
++def code_label(code: str) -> str:
++    return f'short:{code}'
+diff --git a/shortener_tests/test_shortener.py b/shortener_tests/test_shortener.py
+--- a/shortener_tests/test_shortener.py
++++ b/shortener_tests/test_shortener.py
+@@ -212,3 +212,7 @@
+ 
+     assert not api.delete("local-test-token", "bob", code)
+     assert api.stats("local-test-token", "alice") == {"links": 1, "visits": 0}
++
++def test_added_code_label():
++    from shortener.service import code_label
++    assert code_label('abc123') == 'short:abc123'

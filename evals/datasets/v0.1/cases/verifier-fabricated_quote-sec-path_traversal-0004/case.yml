@@ -1,0 +1,24 @@
+id: verifier-fabricated_quote-sec-path_traversal-0004
+source: verifier_attack
+split: dev
+tier: standard
+difficulty: obvious
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: path_traversal
+expected_decision: reject_finding
+must_catch: false
+findings:
+- category: path_traversal
+  severity: high
+  file: report_tool/paths.py
+  line_start: 13
+  line_end: 13
+  quote: fabricated evidence marker
+expected_rejection: QUOTE_NOT_IN_DIFF
+attack: fabricated_quote
+provenance:
+  generated_by: verifier_attack
+  validators_passed:
+  - known_rejection
+  human_reviewed: false
+  cross_check: skipped_no_model

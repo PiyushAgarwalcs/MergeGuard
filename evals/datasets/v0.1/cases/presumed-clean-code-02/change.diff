@@ -1,0 +1,23 @@
+diff --git a/notes_api/db.py b/notes_api/db.py
+--- a/notes_api/db.py
++++ b/notes_api/db.py
+@@ -54,7 +54,7 @@
+     with closing(connect(database_path)) as connection:
+         rows = connection.execute(
+             "SELECT id, user_id, title, body, created_at FROM notes "
+-            "WHERE user_id = ? ORDER BY id",
++            "WHERE user_id = ? ORDER BY id ASC",
+             (user_id,),
+         ).fetchall()
+     return [dict(row) for row in rows]
+diff --git a/notes_tests/test_notes.py b/notes_tests/test_notes.py
+--- a/notes_tests/test_notes.py
++++ b/notes_tests/test_notes.py
+@@ -145,3 +145,7 @@
+ 
+     assert fingerprint != "synthetic-token"
+     assert fingerprint == token_fingerprint("synthetic-token")
++
++def test_presumed_clean_02_notes_can_be_searched_by_title(api):
++    api.create("test-token", "alice", "Garden", "Seeds")
++    assert len(api.search("test-token", "alice", "Garden")) == 1

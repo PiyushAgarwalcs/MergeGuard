@@ -1,0 +1,25 @@
+id: test-gap-missing-03
+source: test_gap
+split: dev
+tier: standard
+difficulty: subtle
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: missing_test
+expected_decision: needs_human
+must_catch: true
+findings:
+- category: missing_test
+  severity: high
+  file: shortener/service.py
+  line_start: 63
+  line_end: 63
+  quote: def code_prefix
+provenance:
+  generated_by: template
+  validators_passed:
+  - applies_cleanly
+  - quote_on_line
+  - rule_scan_quiet
+  - sample_tests
+  human_reviewed: false
+  cross_check: skipped_no_model

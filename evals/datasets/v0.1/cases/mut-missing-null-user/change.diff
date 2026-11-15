@@ -1,0 +1,12 @@
+diff --git a/notes_api/auth.py b/notes_api/auth.py
+--- a/notes_api/auth.py
++++ b/notes_api/auth.py
+@@ -14,7 +14,7 @@
+ 
+ def require_user(user_id: str | None) -> str:
+     """Return a valid user id or raise a permission error."""
+-    if user_id is None or not user_id.strip():
++    if not user_id.strip():
+         raise PermissionError("An authenticated user is required.")
+     return user_id
+ 

@@ -1,0 +1,12 @@
+diff --git a/report_tool/html_report.py b/report_tool/html_report.py
+--- a/report_tool/html_report.py
++++ b/report_tool/html_report.py
+@@ -9,7 +9,7 @@
+     """Render category totals as a small escaped HTML table."""
+     rows = ["<table><thead><tr><th>Category</th><th>Total</th></tr></thead><tbody>"]
+     for category in sorted(totals):
+-        safe_category = escape(category, quote=True)
++        safe_category = category.replace('"', '"')
+         rows.append(f"<tr><td>{safe_category}</td><td>{totals[category]:.2f}</td></tr>")
+     rows.append("</tbody></table>")
+     return "\n".join(rows)

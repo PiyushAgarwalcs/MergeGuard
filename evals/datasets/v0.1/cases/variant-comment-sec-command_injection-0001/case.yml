@@ -1,0 +1,24 @@
+id: variant-comment-sec-command_injection-0001
+source: variant
+split: dev
+tier: standard
+difficulty: obvious
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: command_injection
+expected_decision: needs_human
+must_catch: true
+findings:
+- category: command_injection
+  severity: high
+  file: report_tool/renderer.py
+  line_start: 12
+  line_end: 12
+  quote: '    subprocess.run(f"{renderer} {report_path}", shell=True, check=True)'
+provenance:
+  generated_by: metamorphic_variant
+  validators_passed:
+  - quote_on_line
+  - metamorphic_label_preserved
+  human_reviewed: false
+  cross_check: skipped_no_model
+variant: harmless_comment

@@ -1,0 +1,9 @@
+diff --git a/notes_api/auth.py b/notes_api/auth.py
+--- a/notes_api/auth.py
++++ b/notes_api/auth.py
+@@ -21,4 +21,4 @@
+ 
+ def token_fingerprint(token: str) -> str:
+     """Return a one-way digest suitable for correlation in operational logs."""
+-    return hashlib.sha256(token.encode()).hexdigest()
++    return hashlib.sha1(token.encode()).hexdigest()[:12]

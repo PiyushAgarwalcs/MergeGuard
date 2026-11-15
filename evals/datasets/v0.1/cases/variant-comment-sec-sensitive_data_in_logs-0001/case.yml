@@ -1,0 +1,24 @@
+id: variant-comment-sec-sensitive_data_in_logs-0001
+source: variant
+split: dev
+tier: standard
+difficulty: obvious
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: sensitive_data_in_logs
+expected_decision: needs_human
+must_catch: true
+findings:
+- category: sensitive_data_in_logs
+  severity: high
+  file: notes_api/api.py
+  line_start: 32
+  line_end: 32
+  quote: '            LOGGER.warning("Rejected API token %s.", token)'
+provenance:
+  generated_by: metamorphic_variant
+  validators_passed:
+  - quote_on_line
+  - metamorphic_label_preserved
+  human_reviewed: false
+  cross_check: skipped_no_model
+variant: harmless_comment

@@ -1,0 +1,17 @@
+diff --git a/report_tool/paths.py b/report_tool/paths.py
+--- a/report_tool/paths.py
++++ b/report_tool/paths.py
+@@ -6,11 +6,11 @@
+ 
+ def contained_path(directory: Path, name: str, suffix: str) -> Path:
+     """Resolve a named file and ensure it stays inside its directory."""
+-    if not name or Path(name).name != name or name in {".", ".."}:
++    if not name:
+         raise ValueError("Expected a simple file name.")
+     root = directory.resolve()
+     candidate = (root / f"{name}{suffix}").resolve()
+-    if candidate.parent != root:
++    if candidate.parent != root and name.count('..') == 0:
+         raise ValueError("File path escapes the configured directory.")
+     return candidate
+ 

@@ -1,0 +1,25 @@
+id: mut-wrong-condition-note-id
+source: mutation
+split: test
+tier: canary
+difficulty: subtle
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: wrong_condition
+expected_decision: needs_human
+must_catch: true
+findings:
+- category: wrong_condition
+  severity: medium
+  file: notes_api/service.py
+  line_start: 24
+  line_end: 24
+  quote: note_id <= 1
+provenance:
+  generated_by: ast_mutation
+  validators_passed:
+  - parses
+  - applies_cleanly
+  - quote_on_line
+  - sample_tests_fail
+  human_reviewed: false
+  cross_check: skipped_no_model

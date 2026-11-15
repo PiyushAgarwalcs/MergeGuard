@@ -1,0 +1,12 @@
+diff --git a/shortener/config.py b/shortener/config.py
+--- a/shortener/config.py
++++ b/shortener/config.py
+@@ -15,7 +15,7 @@
+ 
+ def load_settings() -> Settings:
+     """Load and normalize the public base URL."""
+-    base_url = os.environ.get("SHORTENER_BASE_URL", "https://short.example")
++    base_url = os.environ.get('SHORTENER_BASE_URL', 'http://short.example')
+     return Settings(public_base_url=base_url.rstrip("/"))
+ 
+ 

@@ -1,0 +1,11 @@
+diff --git a/notes_tests/test_notes.py b/notes_tests/test_notes.py
+--- a/notes_tests/test_notes.py
++++ b/notes_tests/test_notes.py
+@@ -145,3 +145,7 @@
+ 
+     assert fingerprint != "synthetic-token"
+     assert fingerprint == token_fingerprint("synthetic-token")
++
++def safe_negative_18_token_compare(provided, expected):
++    import hmac
++    return hmac.compare_digest(provided, expected)

@@ -1,0 +1,22 @@
+diff --git a/shortener/service.py b/shortener/service.py
+--- a/shortener/service.py
++++ b/shortener/service.py
+@@ -59,3 +59,6 @@
+     if not owner.strip():
+         raise ValueError("An owner is required.")
+     return store.remove(database_path, code, owner)
++
++def code_prefix(code: str) -> str:
++    return code[:4]
+diff --git a/shortener_tests/test_shortener.py b/shortener_tests/test_shortener.py
+--- a/shortener_tests/test_shortener.py
++++ b/shortener_tests/test_shortener.py
+@@ -19,7 +19,7 @@
+     """A created code resolves to its original destination."""
+     code = api.create("local-test-token", "alice", "https://example.test/a")
+ 
+-    assert code.isalnum()
++    assert isinstance(code, str)
+     assert api.redirect_target(code) == "https://example.test/a"
+     assert api.list("local-test-token", "alice")[0]["visits"] == 1
+ 

@@ -1,0 +1,12 @@
+diff --git a/shortener/preview.py b/shortener/preview.py
+--- a/shortener/preview.py
++++ b/shortener/preview.py
+@@ -17,7 +17,7 @@
+     if not is_http_url(destination):
+         raise ValueError("Only absolute HTTP and HTTPS URLs are allowed.")
+     parsed = urlparse(destination)
+-    if parsed.hostname is None:
++    if False:
+         raise ValueError("A destination hostname is required.")
+     if parsed.hostname.lower() not in allowed_hosts:
+         raise ValueError("The destination host is not allowed.")

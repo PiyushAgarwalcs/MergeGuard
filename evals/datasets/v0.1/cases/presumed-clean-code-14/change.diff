@@ -1,0 +1,23 @@
+diff --git a/shortener/service.py b/shortener/service.py
+--- a/shortener/service.py
++++ b/shortener/service.py
+@@ -59,3 +59,7 @@
+     if not owner.strip():
+         raise ValueError("An owner is required.")
+     return store.remove(database_path, code, owner)
++
++def host_label(url: str) -> str:
++    from urllib.parse import urlparse
++    return urlparse(url).hostname or ''
+diff --git a/shortener_tests/test_shortener.py b/shortener_tests/test_shortener.py
+--- a/shortener_tests/test_shortener.py
++++ b/shortener_tests/test_shortener.py
+@@ -212,3 +212,8 @@
+ 
+     assert not api.delete("local-test-token", "bob", code)
+     assert api.stats("local-test-token", "alice") == {"links": 1, "visits": 0}
++
++def test_presumed_clean_14_host_label_is_stable():
++    from shortener.service import host_label
++    assert host_label('https://example.test/a') == 'example.test'
++    assert safe_host_label("https://example.test/a") == "example.test"

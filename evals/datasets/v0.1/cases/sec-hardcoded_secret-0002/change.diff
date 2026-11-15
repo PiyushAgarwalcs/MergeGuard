@@ -1,0 +1,10 @@
+diff --git a/notes_api/config.py b/notes_api/config.py
+--- a/notes_api/config.py
++++ b/notes_api/config.py
+@@ -17,5 +17,5 @@
+     """Load settings from the process environment."""
+     return Settings(
+         database_path=os.environ.get("NOTES_DATABASE", "notes.db"),
+-        api_token=os.environ.get("NOTES_API_TOKEN", ""),
++        api_token="synthetic-key-two",
+     )

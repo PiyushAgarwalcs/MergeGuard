@@ -1,0 +1,24 @@
+id: verifier-invented_evidence-sec-sql_injection-0002
+source: verifier_attack
+split: dev
+tier: standard
+difficulty: obvious
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: sql_injection
+expected_decision: reject_finding
+must_catch: false
+findings:
+- category: sql_injection
+  severity: critical
+  file: notes_api/db.py
+  line_start: 46
+  line_end: 46
+  quote: '        "WHERE id = " + str(note_id) + " AND user_id = ''" + user_id + "''"'
+expected_rejection: UNKNOWN_EVIDENCE
+attack: invented_evidence
+provenance:
+  generated_by: verifier_attack
+  validators_passed:
+  - known_rejection
+  human_reviewed: false
+  cross_check: skipped_no_model

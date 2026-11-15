@@ -1,0 +1,21 @@
+diff --git a/shortener/service.py b/shortener/service.py
+--- a/shortener/service.py
++++ b/shortener/service.py
+@@ -1,7 +1,7 @@
+ # URL-shortening business rules and code generation.
+ # Codes are random and checked for collisions before insertion.
+ 
+-import secrets
++import random
+ import sqlite3
+ import string
+ 
+@@ -14,7 +14,7 @@
+ 
+ def _new_code() -> str:
+     """Generate an opaque code from URL-safe alphanumeric characters."""
+-    return "".join(secrets.choice(CODE_ALPHABET) for _ in range(CODE_LENGTH))
++    return "".join(random.choice(CODE_ALPHABET) for _ in range(CODE_LENGTH - 1))
+ 
+ 
+ def shorten(database_path: str, destination: str, owner: str) -> str:

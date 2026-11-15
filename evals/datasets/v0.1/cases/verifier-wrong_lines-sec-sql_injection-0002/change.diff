@@ -1,0 +1,13 @@
+diff --git a/notes_api/db.py b/notes_api/db.py
+--- a/notes_api/db.py
++++ b/notes_api/db.py
+@@ -43,8 +43,7 @@
+     with closing(connect(database_path)) as connection:
+         row = connection.execute(
+             "SELECT id, user_id, title, body, created_at FROM notes "
+-            "WHERE id = ? AND user_id = ?",
+-            (note_id, user_id),
++            "WHERE id = " + str(note_id) + " AND user_id = '" + user_id + "'"
+         ).fetchone()
+     return dict(row) if row is not None else None
+ 

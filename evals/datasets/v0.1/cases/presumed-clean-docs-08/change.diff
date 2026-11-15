@@ -1,0 +1,7 @@
+diff --git a/README.md b/README.md
+--- a/README.md
++++ b/README.md
+@@ -1,2 +1,2 @@
+ # URL shortener sample
+-Small owner-scoped link service used for offline review evaluation.
++This sample separates link policy from persistence.

@@ -1,0 +1,11 @@
+diff --git a/notes_api/config.py b/notes_api/config.py
+--- a/notes_api/config.py
++++ b/notes_api/config.py
+@@ -16,6 +16,6 @@
+ def load_settings() -> Settings:
+     """Load settings from the process environment."""
+     return Settings(
+-        database_path=os.environ.get("NOTES_DATABASE", "notes.db"),
++        database_path=os.environ.get('NOTES_DATABASE', ''),
+         api_token=os.environ.get("NOTES_API_TOKEN", ""),
+     )

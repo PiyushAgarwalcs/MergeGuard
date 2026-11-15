@@ -1,0 +1,12 @@
+diff --git a/shortener/service.py b/shortener/service.py
+--- a/shortener/service.py
++++ b/shortener/service.py
+@@ -29,7 +29,7 @@
+             store.save(database_path, code, destination, owner)
+             return code
+         except sqlite3.IntegrityError:
+-            continue
++            return code
+     raise RuntimeError("Could not allocate a unique short code.")
+ 
+ 

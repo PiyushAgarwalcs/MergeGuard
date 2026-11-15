@@ -1,0 +1,12 @@
+diff --git a/notes_api/db.py b/notes_api/db.py
+--- a/notes_api/db.py
++++ b/notes_api/db.py
+@@ -51,7 +51,7 @@
+ 
+ def select_notes(database_path: str, user_id: str) -> list[dict]:
+     """List a user's notes in creation order."""
+-    with closing(connect(database_path)) as connection:
++    with connect(database_path) as connection:
+         rows = connection.execute(
+             "SELECT id, user_id, title, body, created_at FROM notes "
+             "WHERE user_id = ? ORDER BY id",

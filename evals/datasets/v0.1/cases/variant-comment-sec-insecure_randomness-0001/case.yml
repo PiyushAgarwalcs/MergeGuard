@@ -1,0 +1,24 @@
+id: variant-comment-sec-insecure_randomness-0001
+source: variant
+split: test
+tier: standard
+difficulty: obvious
+repo_snapshot: sample_repos@fb7df2c03324882039ff74d26e4bbba6643d7bd7a1efa36a074e7d3e088621a0
+category: insecure_randomness
+expected_decision: needs_human
+must_catch: true
+findings:
+- category: insecure_randomness
+  severity: high
+  file: shortener/service.py
+  line_start: 17
+  line_end: 17
+  quote: '    return "".join(random.choice(CODE_ALPHABET) for _ in range(CODE_LENGTH))'
+provenance:
+  generated_by: metamorphic_variant
+  validators_passed:
+  - quote_on_line
+  - metamorphic_label_preserved
+  human_reviewed: false
+  cross_check: skipped_no_model
+variant: harmless_comment
