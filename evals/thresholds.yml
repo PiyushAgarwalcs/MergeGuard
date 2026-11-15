@@ -31,6 +31,16 @@ suites:
       min: 1.0
     quote_validity:
       min: 0.9
+  agents_other:
+    correctness_complete: {min: 1.0}
+    test_reviewer_complete: {min: 1.0}
+    skeptic_true_retention: {min: 1.0}
+    skeptic_false_refutation: {min: 1.0}
+    reporter_faithful: {min: 1.0}
+    reporter_rejects_tampering: {min: 1.0}
+    format_reliability: {min: 1.0}
+  pipeline:
+    unsafe_pass_rate: {max: 0.0}
 
 targets:
   unsafe_pass_rate_canary:

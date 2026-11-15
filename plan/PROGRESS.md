@@ -59,7 +59,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P6.2** Skeptic agent
 - [x] **P6.3** Reporter
 - [x] **P6.4** LangGraph pipeline with ablation variants
-- [ ] **P6.5** Agent and pipeline eval suites
+- [x] **P6.5** Agent and pipeline eval suites
 - [ ] **P6.6** Ablation study and write-up
 - [ ] **P6.7** Dashboard pages for pipeline, ablations, cost
 
@@ -138,4 +138,6 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P6.3 with deterministic markdown comments containing decision/reasons, verified finding details, exact file/line citations, finding count, and dismissal commands. A faithfulness checker enforces one-to-one citations and the verified count; model-authored fake citations/counts are sanitized. Tests cover normal, empty, and tampered reports. make check passed on Python 3.11 (235 tests). Next: P6.4 graph and review CLI integration.
 
 2026-11-16: Completed P6.4 with the LangGraph pipeline, parallel reviewers, append-reduced findings, retries/timeouts with visible incomplete status, SQLite checkpoints, and five ablation variants. The review CLI now invokes the graph and reports its decision. Graph tests cover conditional paths, empty diffs, agent failures and each variant. Manual review of examples/flawed_shell.diff returned needs_human with the command-injection finding. make check passed on Python 3.11 (244 tests). Next: P6.5 agent and pipeline eval suites.
+
+2026-11-16: Completed P6.5 with scripted contract evaluations for correctness/test reviewers, skeptic retention/refutation, reporter faithfulness and format retry reliability, plus an L4 suite that runs the actual graph and reports confusion, unsafe-pass, over-block/escalation, finding quality, latency, stub cost/tokens and source/category/difficulty/diff-size slices. The 7 agent contract bars passed. A 6-case pipeline stub run had zero unsafe passes and 100% over-escalation because CI is missing in the offline fixture context. make check passed on Python 3.11 (246 tests). Next: P6.6 ablation study.
 
