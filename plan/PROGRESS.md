@@ -39,7 +39,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 ## Phase 4: Evaluation harness, component evals, dashboard base
 
 - [x] **P4.1** Stats, matching and result storage
-- [ ] **P4.2** Thresholds and eval runner CLI
+- [x] **P4.2** Thresholds and eval runner CLI
 - [ ] **P4.3** L1 component suites
 - [ ] **P4.4** Dashboard base pages and smoke tests
 - [ ] **P4.5** Static HTML report command
@@ -106,3 +106,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-15: Completed P3.6 with 12 prompt-injection wrappers across code, README and PR metadata, label-preserving comment/reformat/rename/reorder variants, and four rejected verifier attacks per seeded finding. Verified metamorphic findings and exact rejection reasons with `make check` under Python 3.11; 153 tests passed. Next: P3.7 dataset build, splits, canaries, manifest and stats.
 2026-11-15: Completed P3.7 with deterministic build/validate/stats commands, SHA-256 split assignment, content-hash manifest, 15 canaries, deduplicated representation variants, and 356 validated cases. Phase verification passed: all planned source counts, `validate` reported no errors, stats reported 212 dev / 144 test and 15 canaries; `make check` passed on Python 3.11 (157 tests). Next: P4.1 evaluation stats, matching and result storage.
 2026-11-16: Completed P4.1 with Wilson intervals, small-sample summaries, deterministic paired bootstrap, one-to-one finding matching and unsafe-pass summaries. Suite and case outcomes persist atomically with Git code version, prompt/model metadata and dataset version. `make check` passed on Python 3.11; 171 tests passed. Next: P4.2 thresholds and eval runner CLI.
+2026-11-16: Completed P4.2 with starting metric targets, component bars, threshold validation, explicit suite registration, and `python -m evals.run` arguments for layer/split/repeats/cases/mode. Suite results persist with bar outcomes; a missing metric fails its bar. `make check` passed on Python 3.11; 180 tests passed. Next: P4.3 L1 component suites.
