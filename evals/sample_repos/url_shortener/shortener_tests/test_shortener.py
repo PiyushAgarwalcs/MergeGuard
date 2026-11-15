@@ -87,7 +87,7 @@ def test_code_collision_retries_with_a_fresh_code(
     """A duplicate generated code does not prevent later allocation."""
     from shortener import service
 
-    generated = iter(["samecode", "freshcode"])
+    generated = iter(["samecode", "samecode", "freshcode"])
     monkeypatch.setattr(service, "_new_code", lambda: next(generated))
     api.create("local-test-token", "alice", "https://example.test/first")
 

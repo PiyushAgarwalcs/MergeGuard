@@ -31,7 +31,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P3.1** Three sample apps with tests
 - [x] **P3.2** Template seeders for 12 security categories
 - [x] **P3.3** Mechanical validators
-- [ ] **P3.4** Mutation-verified bug cases
+- [x] **P3.4** Mutation-verified bug cases
 - [ ] **P3.5** Hard negatives, presumed clean, test gaps
 - [ ] **P3.6** Injection wrappers, variants, verifier attacks
 - [ ] **P3.7** Build, split, canaries, manifest, stats
@@ -101,3 +101,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-15: Completed P3.1 with three MIT-licensed sample applications and 49 focused app tests. Verified all apps meet the 300–600 Python-line plan and `make check` passes on Python 3.11; 122 tests passed. Next: P3.2 template seeders for the 12 security categories.
 2026-11-15: Completed P3.2 with four parseable, quote-verified diff templates for each of the 12 security categories. Verified with `make check` under Python 3.11; 130 tests passed. Next: P3.3 mechanical case validators.
 2026-11-15: Completed P3.3 with text-only unified-diff application, syntax/location/quote checks, and Bandit/rule-scanner agreement where supported. Verified with `make check` under Python 3.11; 137 tests passed. Next: P3.4 mutation-verified correctness cases.
+2026-11-15: Completed P3.4 with 12 AST-generated correctness mutations (two per category), each retained only after its copied sample app's tests failed. Added regression sentinels for the mutations. Verified with `make check` under Python 3.11; 146 tests passed. Next: P3.5 hard negatives, presumed-clean cases and test gaps.
