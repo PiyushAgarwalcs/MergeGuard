@@ -11,8 +11,10 @@ from dashboard.queries import (
     _read_connection,
     append_review_action,
     dataset_counts,
+    latest_eval_run,
     list_eval_results,
     list_eval_runs,
+    list_llm_event_summaries,
     load_dataset_cases,
     load_review_log,
 )
@@ -25,7 +27,9 @@ def test_dashboard_queries_read_sample_evaluation_database(tmp_path):
     runs = list_eval_runs(path=database)
     results = list_eval_results("sample-eval-run", path=database)
     assert runs[0]["layer"] == "components"
+    assert latest_eval_run("components", path=database)["eval_run_id"] == "sample-eval-run"
     assert results[0]["case_id"] == "sec-hardcoded_secret-0001"
+    assert list_llm_event_summaries(path=database) == []
 
 
 def test_dashboard_database_connection_is_read_only(tmp_path):

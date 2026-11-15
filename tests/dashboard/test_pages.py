@@ -12,7 +12,10 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 PAGE_FILES = (
     REPOSITORY_ROOT / "dashboard" / "app.py",
     REPOSITORY_ROOT / "dashboard" / "pages" / "1_Overview.py",
+    REPOSITORY_ROOT / "dashboard" / "pages" / "3_Pipeline.py",
     REPOSITORY_ROOT / "dashboard" / "pages" / "4_Case_Explorer.py",
+    REPOSITORY_ROOT / "dashboard" / "pages" / "7_Ablations.py",
+    REPOSITORY_ROOT / "dashboard" / "pages" / "8_Cost_Latency.py",
     REPOSITORY_ROOT / "dashboard" / "pages" / "9_Dataset.py",
 )
 

@@ -64,6 +64,36 @@ def list_eval_results(eval_run_id: str, path: str | Path | None = None) -> list[
     return _list_eval_results_cached(eval_run_id, str(resolved.resolve()))
 
 
+def latest_eval_run(layer: str, path: str | Path | None = None) -> dict[str, Any] | None:
+    """Return the most recent evaluation run for one layer."""
+    return next(
+        (run for run in list_eval_runs(limit=500, path=path) if run["layer"] == layer), None
+    )
+
+
+def list_llm_event_summaries(path: str | Path | None = None) -> list[dict[str, Any]]:
+    """Aggregate recorded model calls by node without exposing prompt contents."""
+    resolved = Path(path) if path is not None else database_path()
+    return _list_llm_event_summaries_cached(str(resolved.resolve()))
+
+
+@st.cache_data(ttl=30)
+def _list_llm_event_summaries_cached(path: str) -> list[dict[str, Any]]:
+    connection = _read_connection(path)
+    if connection is None:
+        return []
+    try:
+        rows = connection.execute("""SELECT node, COUNT(*) AS calls, SUM(tokens_in) AS tokens_in,
+                      SUM(tokens_out) AS tokens_out, SUM(cost_usd) AS cost_usd,
+                      AVG(latency_ms) AS mean_latency_ms
+               FROM events WHERE kind = 'llm_call' GROUP BY node ORDER BY node""").fetchall()
+        return [dict(row) for row in rows]
+    except sqlite3.Error:
+        return []
+    finally:
+        connection.close()
+
+
 @st.cache_data(ttl=30)
 def _list_eval_results_cached(eval_run_id: str, path: str) -> list[dict[str, Any]]:
     """Cache one evaluation's outcomes by run and resolved database path."""
