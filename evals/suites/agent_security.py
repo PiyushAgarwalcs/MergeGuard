@@ -203,7 +203,9 @@ def _is_localized(label: dict[str, Any], finding: Finding) -> bool:
 
 
 def _quote_is_valid(quote: str, diff: str) -> bool:
-    normalize = lambda value: re.sub(r"\s+", " ", value).strip()
+    def normalize(value: str) -> str:
+        return re.sub(r"\s+", " ", value).strip()
+
     return bool(quote) and normalize(quote) in normalize(diff)
 
 

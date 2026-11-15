@@ -6,11 +6,13 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import sqlite3
 import time
 import uuid
 from pathlib import Path
 from typing import Annotated, Any, cast
 
+import httpx
 import typer
 import uvicorn
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
@@ -198,9 +200,16 @@ def review_pull_request(
     owner, repo, number = parse_pull_request_target(target)
     api = github_client or GitHubClient()
     owns_client = github_client is None
+    pr: PullRequest | None = None
+    run_id: str | None = None
     try:
         pr = api.get_pull_request(owner, repo, number)
-        ci_status = api.read_ci_status(owner, repo, pr.head_sha)
+        try:
+            ci_status = api.read_ci_status(owner, repo, pr.head_sha)
+            external_incomplete = False
+        except (GitHubAPIError, httpx.HTTPError):
+            ci_status = "missing"
+            external_incomplete = True
         run_id = _run_id_from_diff(Path(f"{owner}-{repo}-{number}.diff"))
         insert_run(
             run_id,
@@ -220,7 +229,7 @@ def review_pull_request(
                     "repo_path": str(Path.cwd()),
                     "run_id": run_id,
                     "ci_status": ci_status,
-                    "incomplete": False,
+                    "incomplete": external_incomplete,
                 },
                 database_path,
                 f"{pr.repo}#{number}@{pr.head_sha}",
@@ -268,9 +277,41 @@ def review_pull_request(
             outcome=decision.outcome,
         )
         return {"run_id": run_id, "decision": decision, "report": report, "status": status_payload}
+    except (GitHubAPIError, httpx.HTTPError):
+        return _incomplete_review_result(
+            "GitHub API access failed during review.",
+            head_sha=pr.head_sha if pr else "",
+            run_id=run_id,
+        )
+    except sqlite3.Error:
+        return _incomplete_review_result(
+            "Review checkpoint storage is unavailable.",
+            head_sha=pr.head_sha if pr else "",
+            run_id=run_id,
+        )
     finally:
         if owns_client:
             api.close()
+
+
+def _incomplete_review_result(
+    reason: str, *, head_sha: str = "", run_id: str | None = None
+) -> dict[str, Any]:
+    """Return a safe needs_human result when an external prerequisite is unavailable."""
+    decision = Decision(
+        outcome="needs_human",
+        reasons=[reason],
+        head_sha=head_sha,
+        risk_score=0,
+        complete=False,
+    )
+    report = reporter.run({"findings": [], "decision": decision})["report"]
+    return {
+        "run_id": run_id or "unavailable",
+        "decision": decision,
+        "report": report,
+        "status": None,
+    }
 
 
 @app.command("review-pr")

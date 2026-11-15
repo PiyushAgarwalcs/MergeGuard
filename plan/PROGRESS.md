@@ -70,7 +70,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P7.3** review-pr command
 - [x] **P7.4** Polling watch mode
 - [x] **P7.5** Webhook server
-- [ ] **P7.6** Graph integration and fault tests
+- [x] **P7.6** Graph integration and fault tests
 - [ ] **P7.7** Threat model and run-it docs
 
 ## Phase 8: Regression gates, robustness, consistency, judge calibration
@@ -155,3 +155,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 2026-11-16: Completed P7.5 with POST /webhook raw-body HMAC authentication, constant-time signature comparison, delivery-id replay protection, supported-event filtering, and background dispatch for PR and issue-comment events. `mergeguard serve` now launches Uvicorn with configurable bind options. ASGI tests cover valid, invalid, missing and replayed signatures/deliveries, unsupported events, malformed JSON, and missing delivery IDs. make check passed on Python 3.11 (263 passed, 1 skipped). Next: P7.6 graph integration and fault tests.
 
+2026-11-16: Completed P7.6 with scripted integration coverage for pass/interrupt routing, malformed model output, timeout, and one reviewer failing; fixed reviewer transport runtime failures to mark runs incomplete. Added tests for checkpointed dismiss/resume, stale and unauthorized approvals, watch idempotency, GitHub 5xx, SQLite lock, model timeout, and concurrent PR threads. `python -m evals.run --layer integration` passed all five cases; `make check` passed on Python 3.11 (269 passed, 1 skipped). Next: P7.7 threat model and run-it docs.

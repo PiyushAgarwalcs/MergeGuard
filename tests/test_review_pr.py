@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
+import sqlite3
 from pathlib import Path
 from typing import Any
 
 import pytest
 from typer.testing import CliRunner
 
-from mergeguard import storage
+from mergeguard import cli, storage
 from mergeguard.cli import app, parse_pull_request_target, review_pull_request
+from mergeguard.github import GitHubAPIError
 from mergeguard.llm_fake import ScriptedLLM
 from mergeguard.models import PullRequest
 from mergeguard.settings import settings
@@ -101,3 +103,30 @@ def test_review_pr_cli_rejects_invalid_target() -> None:
 
     assert result.exit_code == 1
     assert "owner/repo#number" in result.output
+
+
+def test_review_pull_request_github_5xx_fails_closed() -> None:
+    class UnavailableGitHub(FakeGitHub):
+        def get_pull_request(self, owner: str, repo: str, number: int) -> PullRequest:
+            del owner, repo, number
+            raise GitHubAPIError("fixture 503")
+
+    result = review_pull_request("acme/widget#7", github_client=UnavailableGitHub())
+
+    assert result["decision"].outcome == "needs_human"
+    assert result["decision"].complete is False
+    assert result["status"] is None
+
+
+def test_review_pull_request_sqlite_lock_fails_closed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def unavailable_database(*args, **kwargs):
+        del args, kwargs
+        raise sqlite3.OperationalError("database is locked")
+
+    monkeypatch.setattr(cli, "connect", unavailable_database)
+    result = review_pull_request("acme/widget#7", github_client=FakeGitHub())
+
+    assert result["decision"].outcome == "needs_human"
+    assert result["decision"].complete is False

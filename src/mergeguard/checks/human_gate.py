@@ -41,6 +41,7 @@ def run(state: ReviewState) -> dict[str, Any]:
         return {"approval": None}
     if current.get("pr") is None:
         return {"approval": None, "incomplete": True}
+    all_updates: dict[str, Any] = {}
     while True:
         decision = cast(Decision, current["decision"])
         pr = cast(Any, current["pr"])
@@ -59,10 +60,11 @@ def run(state: ReviewState) -> dict[str, Any]:
         approval = Approval.model_validate(payload)
         _validate_approval(approval, cast(ReviewState, current))
         updated = _apply_approval(approval, cast(ReviewState, current))
+        all_updates.update(updated)
         current.update(updated)
         updated_decision = cast(Decision, current["decision"])
         if updated_decision.outcome == "pass":
-            return updated
+            return all_updates
 
 
 def parse_command(text: str) -> GateCommand:

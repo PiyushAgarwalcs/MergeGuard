@@ -52,6 +52,7 @@ def run(
         MissingCredentials,
         OpenAIError,
         ReplayMiss,
+        RuntimeError,
         TimeoutError,
     ) as error:
         tracing.record(

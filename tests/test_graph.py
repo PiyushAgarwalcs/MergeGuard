@@ -129,6 +129,14 @@ def test_graph_failed_reviewer_keeps_decision_incomplete(isolated_graph: Path) -
     assert result["decision"].complete is False
 
 
+def test_graph_model_timeout_fails_closed(isolated_graph: Path) -> None:
+    """A model timeout is converted to a needs_human decision, never a pass."""
+    result = _invoke(isolated_graph, security=[TimeoutError("fixture timeout")])
+
+    assert result["decision"].outcome == "needs_human"
+    assert result["decision"].complete is False
+
+
 @pytest.mark.parametrize("variant", sorted(VARIANTS))
 def test_graph_supports_each_ablation(isolated_graph: Path, variant: str) -> None:
     """Compile and execute each planned variant with the scripted transport."""
@@ -139,3 +147,40 @@ def test_graph_supports_each_ablation(isolated_graph: Path, variant: str) -> Non
         assert result["report"].startswith("## MergeGuard review")
     else:
         assert result["__interrupt__"][0].value["kind"] == "approval_required"
+
+
+def test_two_pr_threads_keep_decisions_and_checkpoints_separate(isolated_graph: Path) -> None:
+    """Concurrent reviews have distinct thread IDs and retain their own head SHAs."""
+    clients = {
+        "security_reviewer": ScriptedLLM([[], []]),
+        "correctness_reviewer": ScriptedLLM([[], []]),
+        "test_reviewer": ScriptedLLM([[], []]),
+        "skeptic": ScriptedLLM([]),
+    }
+
+    async def review_both():
+        async with AsyncSqliteSaver.from_conn_string(str(isolated_graph)) as saver:
+            await saver.setup()
+            graph = build_graph(checkpointer=saver, clients=clients)
+            states = [
+                {
+                    "pr": _pr().model_copy(update={"head_sha": sha}),
+                    "repo_path": str(isolated_graph.parent),
+                    "run_id": f"pr-{sha}",
+                    "ci_status": "passing",
+                    "incomplete": False,
+                }
+                for sha in ("head-a", "head-b")
+            ]
+            return await asyncio.gather(
+                *(
+                    graph.ainvoke(
+                        state,
+                        config={"configurable": {"thread_id": f"repo#4@{state['pr'].head_sha}"}},
+                    )
+                    for state in states
+                )
+            )
+
+    first, second = asyncio.run(review_both())
+    assert {first["decision"].head_sha, second["decision"].head_sha} == {"head-a", "head-b"}

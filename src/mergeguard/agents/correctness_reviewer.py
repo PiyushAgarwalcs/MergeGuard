@@ -65,6 +65,7 @@ def run(state: ReviewState, *, client: ScriptedLLM | None = None) -> dict[str, A
         MissingCredentials,
         OpenAIError,
         ReplayMiss,
+        RuntimeError,
         TimeoutError,
     ) as error:
         tracing.record(

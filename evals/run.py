@@ -20,6 +20,7 @@ from evals.suites.ablations import run as run_ablations
 from evals.suites.agent_security import run as run_agent_security
 from evals.suites.agents_other import run as run_agents_other
 from evals.suites.components import run as run_components
+from evals.suites.graph_integration import run as run_graph_integration
 from evals.suites.pipeline import run as run_pipeline
 from mergeguard.storage import connect
 
@@ -51,6 +52,7 @@ SUITE_RUNNERS: dict[str, SuiteRunner] = {
     "agents_other": run_agents_other,
     "ablations": run_ablations,
     "components": run_components,
+    "integration": run_graph_integration,
     "pipeline": run_pipeline,
 }
 
