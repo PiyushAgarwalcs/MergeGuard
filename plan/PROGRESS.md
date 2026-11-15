@@ -55,7 +55,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 ## Phase 6: The agent team, the graph, pipeline evals, ablations
 
-- [ ] **P6.1** Correctness and test reviewers
+- [x] **P6.1** Correctness and test reviewers
 - [ ] **P6.2** Skeptic agent
 - [ ] **P6.3** Reporter
 - [ ] **P6.4** LangGraph pipeline with ablation variants
@@ -127,4 +127,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 
 2026-11-16: Completed P5.6 with seed_issue.v1 generation, exact-diff evidence validation, an independently routed cross-check model, and redacted disagreement review-queue entries. Added build --version v0.2 --llm; the no-credentials command printed a clear skip and exited 0 without creating v0.2. Scripted generation/cross-check and no-write tests passed; make check passed on Python 3.11 (225 tests). Live LLM growth was not run because credentials are unavailable.
+
+
+2026-11-16: Completed P6.1 with correctness and test reviewers, category/source-restricted Pydantic response schemas, versioned prompts, bounded diff/context instructions, and visible incomplete status on failures. Scripted tests cover valid, out-of-scope retry failure, and empty findings. make check passed on Python 3.11 (229 tests). Next: P6.2 skeptic agent.
 
