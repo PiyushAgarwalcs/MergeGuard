@@ -187,6 +187,8 @@ class ReviewState(TypedDict, total=False):
     hunk: Hunk
     complete: bool
     findings: list[Finding]
+    verified_findings: list[Finding]
+    decision_findings: list[Finding]
     rejected: list[Rejection]
     verdicts: list[SkepticVerdict]
     risk: RiskBreakdown

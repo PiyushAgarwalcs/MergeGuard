@@ -98,6 +98,7 @@ def judge_run(state: ReviewState | dict[str, object]) -> dict[str, Decision]:
 
     files = getattr(pr, "files", []) if pr else []
     ci_status = getattr(context, "ci_status", None) if context else None
+    complete = state.get("complete", True)
     risk_score = calculate_risk(findings, files, ci_status)
     reasons: list[str] = []
 
@@ -117,6 +118,17 @@ def judge_run(state: ReviewState | dict[str, object]) -> dict[str, Decision]:
             "decision": Decision(
                 outcome="needs_human",
                 reasons=["The review input was incomplete or missing."],
+                head_sha=getattr(pr, "head_sha", ""),
+                risk_score=risk_score,
+                complete=False,
+            )
+        }
+
+    if not complete:
+        return {
+            "decision": Decision(
+                outcome="needs_human",
+                reasons=["One or more review steps failed or timed out."],
                 head_sha=getattr(pr, "head_sha", ""),
                 risk_score=risk_score,
                 complete=False,

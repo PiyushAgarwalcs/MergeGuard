@@ -3,22 +3,24 @@
 
 from __future__ import annotations
 
+import asyncio
+import hashlib
 import json
+import time
 import uuid
 from pathlib import Path
-from typing import Annotated, cast
+from typing import Annotated, Any, cast
 
 import typer
+from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from rich.console import Console
 from rich.table import Table
 
 from evals.report import DEFAULT_REPORT_PATH, write_static_report
-from mergeguard.checks.judge import judge_run
-from mergeguard.checks.merge_findings import merge_findings
-from mergeguard.checks.rule_scan import scan_diff
-from mergeguard.checks.verify_findings import verify_findings
-from mergeguard.models import Finding, PullRequest, ReviewContext
-from mergeguard.storage import get_events, get_run, insert_finding, insert_run, list_runs
+from mergeguard.checks.diff_parser import parse_diff
+from mergeguard.graph import build_graph
+from mergeguard.models import Decision, Finding, PullRequest
+from mergeguard.storage import connect, get_events, get_run, insert_finding, insert_run, list_runs
 from mergeguard.tracing import record, span
 
 console = Console()
@@ -33,21 +35,39 @@ def _run_id_from_diff(diff_file: Path) -> str:
     return f"run-{uuid.uuid4().hex[:12]}"
 
 
+async def _invoke_review_graph(
+    state: dict[str, Any], database_path: str, thread_id: str
+) -> dict[str, Any]:
+    """Run the review graph with the async SQLite checkpoint saver."""
+    async with AsyncSqliteSaver.from_conn_string(database_path) as checkpointer:
+        await checkpointer.setup()
+        graph = build_graph(checkpointer=checkpointer)
+        return cast(
+            dict[str, Any],
+            await graph.ainvoke(
+                state,
+                config={"configurable": {"thread_id": thread_id}},
+            ),
+        )
+
+
 @app.command()
 def review(diff_file: Path) -> None:
     "Review a unified diff file and print the decision outcome."
     raw_text = diff_file.read_text(encoding="utf-8", errors="replace")
     run_id = _run_id_from_diff(diff_file)
+    head_sha = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+    changed_files = sorted({hunk.file for hunk in parse_diff(raw_text)})
     pr = PullRequest(
         repo="local",
         number=0,
-        head_sha="local-sha",
+        head_sha=head_sha,
         base_sha="base-sha",
         title="review",
         body="",
         author="local",
         diff=raw_text,
-        files=[str(diff_file)],
+        files=changed_files,
     )
     insert_run(
         run_id,
@@ -57,33 +77,51 @@ def review(diff_file: Path) -> None:
         status="running",
         outcome="pending",
     )
-    context = ReviewContext(ci_status="passing", blocks=[])
+    started = time.perf_counter()
     with span(run_id, "review", repo=pr.repo, pr_number=pr.number, head_sha=pr.head_sha):
-        state: dict[str, object] = {
+        graph_state: dict[str, Any] = {
             "pr": pr,
-            "context": context,
-            "findings": scan_diff(raw_text),
+            "repo_path": str(Path.cwd()),
+            "run_id": run_id,
+            "ci_status": "missing",
+            "incomplete": False,
         }
-        record(
-            run_id, "review", "scan", {"finding_count": len(cast(list[Finding], state["findings"]))}
+        checkpoint_connection = connect()
+        database_path = str(checkpoint_connection.execute("PRAGMA database_list").fetchone()[2])
+        checkpoint_connection.close()
+        result = asyncio.run(
+            _invoke_review_graph(
+                graph_state,
+                database_path,
+                f"{pr.repo}#{pr.number}@{pr.head_sha}",
+            )
         )
-        findings = cast(list[Finding], state["findings"])
-        verified, _ = verify_findings(findings, raw_text, cast(ReviewContext, state["context"]))
-        merged = merge_findings(verified)
-        state["findings"] = merged
-        for finding in merged:
-            insert_finding(run_id, finding.model_dump())
+
+        findings = cast(list[Finding], result.get("decision_findings", []))
+        decision = cast(Decision, result["decision"])
+        for finding in cast(list[Finding], result.get("verified_findings", [])):
+            status = "shown" if finding in findings else "dismissed"
+            stored = {**finding.model_dump(), "verified": True, "status": status}
+            insert_finding(run_id, stored)
             record(
                 run_id,
                 "review",
-                "finding",
+                "finding" if status == "shown" else "dismissed_finding",
                 {
                     "id": finding.id,
                     "category": finding.category,
                     "severity": finding.severity.value,
+                    "status": status,
                 },
             )
-        decision = judge_run(state)["decision"]
+        for rejection in result.get("rejected", []):
+            record(
+                run_id,
+                "review",
+                "finding_rejected",
+                {"id": rejection.finding.id, "reason": rejection.reason},
+            )
+        record(run_id, "review", "scan", {"finding_count": len(result.get("findings", []))})
         record(
             run_id,
             "review",
@@ -102,7 +140,7 @@ def review(diff_file: Path) -> None:
             finished_at="now",
             status="finished",
             outcome=decision.outcome,
-            total_ms=0,
+            total_ms=int((time.perf_counter() - started) * 1000),
         )
 
     table = Table(title=f"Decision: {decision.outcome.upper()}")
@@ -111,9 +149,11 @@ def review(diff_file: Path) -> None:
     table.add_row(
         decision.outcome, " | ".join(decision.reasons) if decision.reasons else "No findings"
     )
-    for finding in merged:
+    for finding in findings:
         table.add_row(f"{finding.file}:{finding.line_start}", finding.category)
     console.print(table)
+    if result.get("report"):
+        console.print(str(result["report"]))
 
     if decision.outcome == "block":
         raise typer.Exit(code=2)

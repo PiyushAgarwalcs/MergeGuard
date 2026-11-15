@@ -18,7 +18,7 @@ CITATION_PATTERN = re.compile(
 
 def run(state: ReviewState) -> dict[str, str]:
     """Create a faithful markdown comment from the verified review state."""
-    findings = state.get("findings", [])
+    findings = state.get("decision_findings", state.get("findings", []))
     decision = state.get("decision")
     if decision is None:
         report = "## MergeGuard review\n\nReview is incomplete; a decision was not produced.\n"
