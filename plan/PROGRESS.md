@@ -46,7 +46,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 ## Phase 5: Model client, context, first agent, agent evals
 
-- [ ] **P5.1** LLM client with modes and scripted fake
+- [x] **P5.1** LLM client with modes and scripted fake
 - [ ] **P5.2** Context collector
 - [ ] **P5.3** Prompt loader and security prompt
 - [ ] **P5.4** Security reviewer agent
@@ -110,3 +110,6 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P4.3 with 50 diff parser cases, 150 secret/redactor snippets, v0.1 pattern cases, 240 verifier cases, risk/judge properties and truth table, plus webhook signature and replay checks. `python -m evals.run --layer components --split test` saved a passing result; bars were all met (parser 1.0, secret recall 1.0, placeholder FP 0.0, redaction 1.0, verifier false acceptance/rejection 0.0, judge accuracy 1.0, webhook 1.0). `make check` passed on Python 3.11; 188 tests passed. Next: P4.4 dashboard base pages and smoke tests.
 2026-11-16: Completed P4.4 with read-only SQLite dashboard queries, overview/case explorer/dataset pages, cached query results, append-only review logging, a synthetic sample database, and smoke tests on populated and empty databases. Dashboard tests passed (8); `make check` passed on Python 3.11 (196 tests). Next: P4.5 static HTML report command.
 2026-11-16: Completed Phase 4: threshold-gated eval runner, all L1 component suites, base dashboard pages, append-only review logging, and static HTML report. Phase verification passed: `python -m evals.run --layer components` saved a passing run with 704 case outcomes; `pytest tests/dashboard` passed (8); `make check` passed on Python 3.11 (200 tests). Generated `evals/results/report.html` from the saved component run. Next: P5.1 LLM client with modes and scripted fake.
+
+2026-11-16: Completed P5.1 with live/record/replay/off modes, SHA-256 request cache, tolerant JSON parsing, Pydantic validation and one repair retry, timeout handling, tracing, and ScriptedLLM coverage. Focused client tests passed (11); make check passed on Python 3.11 (211 tests). No credentials were needed. Next: P5.2 context collector.
+
