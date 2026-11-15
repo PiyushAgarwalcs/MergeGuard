@@ -1,0 +1,97 @@
+# Tests dashboard read-only database access and append-only dataset reviews.
+# Temporary databases and cases isolate each query behavior.
+
+import sqlite3
+from pathlib import Path
+
+import pytest
+import yaml
+
+from dashboard.queries import (
+    _read_connection,
+    append_review_action,
+    dataset_counts,
+    list_eval_results,
+    list_eval_runs,
+    load_dataset_cases,
+    load_review_log,
+)
+from tests.make_sample_db import build_sample_db
+
+
+def test_dashboard_queries_read_sample_evaluation_database(tmp_path):
+    """Read the synthetic run and its linked case result."""
+    database = build_sample_db(tmp_path / "sample.db")
+    runs = list_eval_runs(path=database)
+    results = list_eval_results("sample-eval-run", path=database)
+    assert runs[0]["layer"] == "components"
+    assert results[0]["case_id"] == "sec-hardcoded_secret-0001"
+
+
+def test_dashboard_database_connection_is_read_only(tmp_path):
+    """Prevent dashboard SQL from changing the evaluation database."""
+    database = build_sample_db(tmp_path / "sample.db")
+    connection = _read_connection(database)
+    assert connection is not None
+    try:
+        with pytest.raises(sqlite3.OperationalError):
+            connection.execute("DELETE FROM eval_runs")
+    finally:
+        connection.close()
+
+
+def test_missing_database_and_dataset_return_empty_data(tmp_path):
+    """Show empty states instead of creating missing database or case files."""
+    assert list_eval_runs(path=tmp_path / "missing.db") == []
+    assert load_dataset_cases("missing", tmp_path) == []
+
+
+def test_dataset_counts_group_case_metadata(tmp_path):
+    """Count loaded cases by source, category, split and tier."""
+    _write_case(tmp_path, "case-1", "seeded", "sql_injection", "dev", "canary")
+    _write_case(tmp_path, "case-2", "hard_negative", "safe", "test", "standard")
+    counts = dataset_counts("v0.1", tmp_path)
+    assert counts["total"] == 2
+    assert counts["source"] == {"hard_negative": 1, "seeded": 1}
+    assert counts["tier"] == {"canary": 1, "standard": 1}
+
+
+def test_review_action_appends_without_mutating_case_file(tmp_path):
+    """Record the reviewer decision in JSONL and preserve the original case."""
+    case_file = _write_case(tmp_path, "case-1", "seeded", "sql_injection", "dev", "canary")
+    original = case_file.read_text(encoding="utf-8")
+    record = append_review_action("v0.1", "case-1", "accept", "tester", "verified", tmp_path)
+    assert record["action"] == "accept"
+    assert case_file.read_text(encoding="utf-8") == original
+    assert load_review_log("v0.1", tmp_path)[0]["case_id"] == "case-1"
+
+
+def test_review_action_rejects_unknown_action_and_path(tmp_path):
+    """Refuse unsupported actions and case ids that escape the dataset root."""
+    _write_case(tmp_path, "case-1", "seeded", "sql_injection", "dev", "canary")
+    with pytest.raises(ValueError):
+        append_review_action("v0.1", "case-1", "ignore", "tester", "", tmp_path)
+    with pytest.raises(ValueError):
+        append_review_action("v0.1", "..", "accept", "tester", "", tmp_path)
+
+
+def _write_case(
+    root: Path, case_id: str, source: str, category: str, split: str, tier: str
+) -> Path:
+    """Write the minimal case file needed by dashboard dataset queries."""
+    case_dir = root / "v0.1" / "cases" / case_id
+    case_dir.mkdir(parents=True, exist_ok=True)
+    record = {
+        "id": case_id,
+        "source": source,
+        "category": category,
+        "split": split,
+        "tier": tier,
+        "expected_decision": "block",
+        "findings": [],
+        "provenance": {},
+    }
+    case_file = case_dir / "case.yml"
+    case_file.write_text(yaml.safe_dump(record), encoding="utf-8")
+    (case_dir / "change.diff").write_text("+added\n", encoding="utf-8")
+    return case_file
