@@ -21,10 +21,10 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 ## Phase 2: Storage and tracing
 
-- [ ] **P2.1** SQLite storage
-- [ ] **P2.2** Tracing
-- [ ] **P2.3** Wire review CLI to storage, add runs commands
-- [ ] **P2.4** Reconstruction, privacy and concurrency tests
+- [x] **P2.1** SQLite storage
+- [x] **P2.2** Tracing
+- [x] **P2.3** Wire review CLI to storage, add runs commands
+- [x] **P2.4** Reconstruction, privacy and concurrency tests
 
 ## Phase 3: Golden dataset v0.1 (template-based, no model needed)
 
@@ -97,3 +97,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 2026-11-15: Completed the Phase 0 skeleton: Python 3.11 package layout, typed settings/models, Makefile and CI, and verified with `make check` under the Python 3.11 toolchain. Next session should resume with the first Phase 1 task: P1.1 Diff parser.
 2026-11-15: Completed Phase 1 deterministic core: diff parsing, redaction, rule-based scanning, finding verification, dedupe/id assignment, risk scoring, and CLI review behavior. Verified with `make check` under Python 3.11; 69 tests passed.
+2026-11-15: Completed Phase 2 storage and tracing: SQLite WAL-backed persistence, run/event/finding models, run listing/show commands, privacy-safe diff hashing, and concurrency-safe writes. Verified with `make check` under Python 3.11; 73 tests passed.

@@ -35,13 +35,14 @@ def merge_findings(findings: list[Finding]) -> list[Finding]:
                 existing.explanation = candidate.explanation
                 existing.suggestion = candidate.suggestion
                 existing.evidence = candidate.evidence
-            elif _severity_rank(candidate.severity) == _severity_rank(existing.severity):
-                if _source_rank(candidate.source) > _source_rank(existing.source):
-                    existing.source = candidate.source
-                    existing.quote = candidate.quote
-                    existing.explanation = candidate.explanation
-                    existing.suggestion = candidate.suggestion
-                    existing.evidence = candidate.evidence
+            elif _severity_rank(candidate.severity) == _severity_rank(
+                existing.severity
+            ) and _source_rank(candidate.source) > _source_rank(existing.source):
+                existing.source = candidate.source
+                existing.quote = candidate.quote
+                existing.explanation = candidate.explanation
+                existing.suggestion = candidate.suggestion
+                existing.evidence = candidate.evidence
             merged = True
             break
         if not merged:

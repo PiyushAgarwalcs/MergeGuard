@@ -10,7 +10,7 @@ from mergeguard.models import AddedLine, Hunk, ReviewState
 
 def _normalize_path(value: str) -> str:
     text = value.strip()
-    if text.startswith("a/") or text.startswith("b/"):
+    if text.startswith(("a/", "b/")):
         return text[2:]
     if text.startswith('"') and text.endswith('"'):
         return text[1:-1]
@@ -20,7 +20,7 @@ def _normalize_path(value: str) -> str:
 
 
 def _extract_patch_path(raw: str) -> str:
-    if raw.startswith("+++ ") or raw.startswith("--- "):
+    if raw.startswith(("+++ ", "--- ")):
         return _normalize_path(raw[4:])
     return _normalize_path(raw)
 

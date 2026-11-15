@@ -100,13 +100,13 @@ def _skip_false_positive(line: str) -> bool:
     lower = line.lower()
     if "os.environ.get" in lower or "os.environ[" in lower:
         return True
-    if re.search(r"\b(?:test|fixture|dummy|sample|example)[A-Za-z0-9_]*\s*[:=]", line, re.I):
+    if re.search(
+        r"\b(?:test|fixture|dummy|sample|example)[A-Za-z0-9_]*\s*[:=]", line, re.IGNORECASE
+    ):
         return True
     if "fixture" in lower or "dummy" in lower or "sample" in lower or "example" in lower:
         return True
-    if re.search(r"\b[A-Z_]{3,}_KEY\s*=\s*os\.environ", line):
-        return True
-    return False
+    return bool(re.search(r"\b[A-Z_]{3,}_KEY\s*=\s*os\.environ", line))
 
 
 def _findings_for_hunk(hunk: Hunk, diff_file: str) -> list[Finding]:
