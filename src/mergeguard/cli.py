@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Annotated, Any, cast
 
 import typer
+import uvicorn
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from rich.console import Console
 from rich.table import Table
@@ -464,8 +465,12 @@ def watch(
 
 
 @app.command()
-def serve() -> None:
-    typer.echo("serve command placeholder")
+def serve(
+    host: str = typer.Option("127.0.0.1", help="Interface to bind the webhook server to."),
+    port: int = typer.Option(8000, min=1, max=65535, help="Webhook server port."),
+) -> None:
+    """Run the FastAPI health and GitHub webhook service."""
+    uvicorn.run("mergeguard.api:app", host=host, port=port)
 
 
 @app.command()

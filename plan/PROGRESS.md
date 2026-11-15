@@ -69,7 +69,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P7.2** Human gate and commands
 - [x] **P7.3** review-pr command
 - [x] **P7.4** Polling watch mode
-- [ ] **P7.5** Webhook server
+- [x] **P7.5** Webhook server
 - [ ] **P7.6** Graph integration and fault tests
 - [ ] **P7.7** Threat model and run-it docs
 
@@ -152,4 +152,6 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P7.3 with `mergeguard review-pr owner/repo#N`: it fetches PR metadata, diff, changed files and CI; runs the checkpointed review graph; stores findings/run state; and publishes the commit status plus the single MergeGuard report comment. Tests verify target parsing and pass/success and needs_human/pending publication mappings; API tests cover block/failure. make check passed on Python 3.11 (258 passed, 1 skipped). Next: P7.4 polling watch mode.
 
 2026-11-16: Completed P7.4 with `mergeguard watch owner/repo --shadow --interval N`, open-PR polling, and exact repo/PR/head idempotency. Waiting runs inspect comments from approvers and resume their saved checkpoint; shadow mode records without posting. A dismissed finding that still needs review re-interrupts instead of losing the waiting state. Tests cover new/unchanged heads, changed-head processing, shadow no-post behavior, and command-driven resume. make check passed on Python 3.11 (260 passed, 1 skipped). Next: P7.5 webhook server.
+
+2026-11-16: Completed P7.5 with POST /webhook raw-body HMAC authentication, constant-time signature comparison, delivery-id replay protection, supported-event filtering, and background dispatch for PR and issue-comment events. `mergeguard serve` now launches Uvicorn with configurable bind options. ASGI tests cover valid, invalid, missing and replayed signatures/deliveries, unsupported events, malformed JSON, and missing delivery IDs. make check passed on Python 3.11 (263 passed, 1 skipped). Next: P7.6 graph integration and fault tests.
 
