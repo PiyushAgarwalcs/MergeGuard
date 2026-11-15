@@ -4,10 +4,10 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 ## Phase 0: Skeleton
 
-- [ ] **P0.1** Package skeleton and pyproject
-- [ ] **P0.2** Makefile with make check
-- [ ] **P0.3** settings.py and models.py
-- [ ] **P0.4** CI workflow, README and docs stubs
+- [x] **P0.1** Package skeleton and pyproject
+- [x] **P0.2** Makefile with make check
+- [x] **P0.3** settings.py and models.py
+- [x] **P0.4** CI workflow, README and docs stubs
 
 ## Phase 1: Deterministic core (no model, no network)
 
@@ -95,4 +95,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 ## Session notes
 
-(one line per session or task: date, what was done, anything the next session must know)
+2026-11-15: Completed the Phase 0 skeleton: Python 3.11 package layout, typed settings/models, Makefile and CI, and verified with `make check` under the Python 3.11 toolchain. Next session should resume with the first Phase 1 task: P1.1 Diff parser.
