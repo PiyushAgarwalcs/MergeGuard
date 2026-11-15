@@ -17,14 +17,17 @@ def run(config: EvalConfig) -> SuiteResult:
     live_requested = config.mode == "live"
     live_available = bool(settings.LLM_API_KEY and settings.LLM_BASE_URL)
     scripted = not live_requested or not live_available
+    repeat_count = config.repeats if live_requested and live_available else 1
     previous_mode = settings.LLM_MODE
     settings.LLM_MODE = "record" if scripted else "live"
     try:
-        cases = _injection_results(config, scripted)
-        odd_cases = _odd_input_results(scripted)
+        repeated_results = [
+            _injection_results(config, scripted, repeat) + _odd_input_results(scripted, repeat)
+            for repeat in range(1, repeat_count + 1)
+        ]
     finally:
         settings.LLM_MODE = previous_mode
-    results = cases + odd_cases
+    results = tuple(case for repeat_results in repeated_results for case in repeat_results)
     injection_cases = [case for case in results if case.case_id.startswith("injection-")]
     odd_cases = [case for case in results if case.case_id.startswith("odd-")]
     metrics = {
@@ -43,9 +46,9 @@ def run(config: EvalConfig) -> SuiteResult:
     return SuiteResult(
         layer="robustness",
         dataset_version=f"{config.dataset_version}-robustness-v1",
-        repeats=1,
+        repeats=repeat_count,
         metrics=metrics,
-        cases=tuple(results),
+        cases=results,
         model_config={
             "mode": metrics["mode"],
             "skip_reason": (
@@ -55,7 +58,9 @@ def run(config: EvalConfig) -> SuiteResult:
     )
 
 
-def _injection_results(config: EvalConfig, scripted: bool) -> tuple[SuiteCaseResult, ...]:
+def _injection_results(
+    config: EvalConfig, scripted: bool, repeat: int
+) -> tuple[SuiteCaseResult, ...]:
     """Compare each wrapped injection with its unwrapped equivalent."""
     loaded = load_cases(config.dataset_version)
     records = [(record, diff) for record, diff in loaded if record.get("source") == "injection"]
@@ -78,7 +83,7 @@ def _injection_results(config: EvalConfig, scripted: bool) -> tuple[SuiteCaseRes
         output.append(
             SuiteCaseResult(
                 case_id=f"injection-{record_id}",
-                repeat=1,
+                repeat=repeat,
                 passed=no_change and no_leak,
                 expected={"same_decision": True, "no_marker_leak": True},
                 actual={"injection": _outcome(injected), "plain": _outcome(plain)},
@@ -88,7 +93,7 @@ def _injection_results(config: EvalConfig, scripted: bool) -> tuple[SuiteCaseRes
     return tuple(output)
 
 
-def _odd_input_results(scripted: bool) -> tuple[SuiteCaseResult, ...]:
+def _odd_input_results(scripted: bool, repeat: int) -> tuple[SuiteCaseResult, ...]:
     """Run representative malformed, oversized, binary and Unicode diffs safely."""
     cases = _odd_inputs()
     output = []
@@ -106,7 +111,7 @@ def _odd_input_results(scripted: bool) -> tuple[SuiteCaseResult, ...]:
         output.append(
             SuiteCaseResult(
                 case_id=f"odd-{name}",
-                repeat=1,
+                repeat=repeat,
                 passed=passed,
                 expected={"outcome": "needs_human", "incomplete": expected_incomplete},
                 actual={"error": error},

@@ -1,0 +1,86 @@
+name: Nightly evaluations
+
+on:
+  schedule:
+    - cron: '15 3 * * *'
+    - cron: '30 4 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  credentials:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - id: check
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ vars.LLM_BASE_URL }}
+        run: |
+          if [ -n "$LLM_API_KEY" ] && [ -n "$LLM_BASE_URL" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping live evaluations: LLM_API_KEY or LLM_BASE_URL is missing."
+          fi
+
+  nightly-live:
+    needs: credentials
+    if: needs.credentials.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    env:
+      LLM_MODE: live
+      LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+      LLM_BASE_URL: ${{ vars.LLM_BASE_URL }}
+      REVIEWER_MODEL: ${{ vars.REVIEWER_MODEL }}
+      SKEPTIC_MODEL: ${{ vars.SKEPTIC_MODEL }}
+      JUDGE_MODEL: ${{ vars.JUDGE_MODEL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e '.[dev]'
+      - name: Live L2 reviewer suite, three repeats
+        run: python -m evals.run --layer agent_security --split test --repeats 3 --mode live
+      - name: Live L2 non-security agents, three repeats
+        run: python -m evals.run --layer agents_other --split test --repeats 3 --mode live
+      - name: Live L4 pipeline suite, three repeats
+        run: python -m evals.run --layer pipeline --split test --repeats 3 --mode live
+      - name: Live L5 robustness suite, three repeats
+        run: python -m evals.run --layer robustness --repeats 3 --mode live
+
+  weekly-live:
+    needs: credentials
+    if: >-
+      needs.credentials.outputs.ready == 'true' &&
+      (github.event_name == 'workflow_dispatch' || github.event.schedule == '30 4 * * 0')
+    runs-on: ubuntu-latest
+    env:
+      LLM_MODE: live
+      LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+      LLM_BASE_URL: ${{ vars.LLM_BASE_URL }}
+      REVIEWER_MODEL: ${{ vars.REVIEWER_MODEL }}
+      SKEPTIC_MODEL: ${{ vars.SKEPTIC_MODEL }}
+      JUDGE_MODEL: ${{ vars.JUDGE_MODEL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e '.[dev]'
+      - name: Weekly L6 consistency, five repeats
+        run: python -m evals.run --layer consistency --split test --repeats 5 --mode live
+      - name: Weekly L7 ablations
+        run: python -m evals.run --layer ablations --split dev --mode live

@@ -17,6 +17,8 @@ import yaml
 from evals.baseline import BASELINE_PATH, save_baselines
 from evals.compare import compare_runs, render_markdown
 from evals.config import EvalConfig
+from evals.gate_cli import saved_regression_report
+from evals.gates import run_gate_self_test
 from evals.judges.calibration import annotate_judge_metrics, load_calibration_samples
 from evals.results import SuiteResult, save_suite_result
 from evals.suites.ablations import run as run_ablations
@@ -159,6 +161,28 @@ def execute_evaluation(
 def main(argv: list[str] | None = None) -> int:
     """Parse the evaluation CLI, run one suite and report its gate result."""
     command_args = list(sys.argv[1:] if argv is None else argv)
+    if command_args[:1] == ["gate"]:
+        parser = argparse.ArgumentParser(prog="python -m evals.run gate")
+        parser.parse_args(command_args[1:])
+        try:
+            report = saved_regression_report()
+        except (OSError, TypeError, ValueError, sqlite3.Error) as error:
+            print(json.dumps({"error": str(error)}), file=sys.stderr)
+            return 1
+        print(
+            json.dumps(
+                {"passed": report.passed, "failures": report.failures, "warnings": report.warnings},
+                indent=2,
+            )
+        )
+        return 0 if report.passed else 1
+    if command_args[:1] == ["gate-self-test"]:
+        parser = argparse.ArgumentParser(prog="python -m evals.run gate-self-test")
+        parser.parse_args(command_args[1:])
+        baseline, degraded = run_gate_self_test()
+        passed = baseline.passed and not degraded.passed
+        print(json.dumps({"passed": passed, "degraded_rejected": not degraded.passed}))
+        return 0 if passed else 1
     if command_args[:1] == ["compare"]:
         parser = argparse.ArgumentParser(prog="python -m evals.run compare")
         parser.add_argument("run_a")
