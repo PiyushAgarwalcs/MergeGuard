@@ -11,13 +11,13 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 ## Phase 1: Deterministic core (no model, no network)
 
-- [ ] **P1.1** Diff parser
-- [ ] **P1.2** Secret redactor
-- [ ] **P1.3** Rule scanner
-- [ ] **P1.4** Verifier
-- [ ] **P1.5** Merge and dedupe
-- [ ] **P1.6** Risk score and judge
-- [ ] **P1.7** Example diffs and review CLI
+- [x] **P1.1** Diff parser
+- [x] **P1.2** Secret redactor
+- [x] **P1.3** Rule scanner
+- [x] **P1.4** Verifier
+- [x] **P1.5** Merge and dedupe
+- [x] **P1.6** Risk score and judge
+- [x] **P1.7** Example diffs and review CLI
 
 ## Phase 2: Storage and tracing
 
@@ -96,3 +96,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 ## Session notes
 
 2026-11-15: Completed the Phase 0 skeleton: Python 3.11 package layout, typed settings/models, Makefile and CI, and verified with `make check` under the Python 3.11 toolchain. Next session should resume with the first Phase 1 task: P1.1 Diff parser.
+2026-11-15: Completed Phase 1 deterministic core: diff parsing, redaction, rule-based scanning, finding verification, dedupe/id assignment, risk scoring, and CLI review behavior. Verified with `make check` under Python 3.11; 69 tests passed.

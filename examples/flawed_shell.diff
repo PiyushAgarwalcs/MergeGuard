@@ -1,0 +1,7 @@
+diff --git a/runner.py b/runner.py
+index 1111111..2222222 100644
+--- a/runner.py
++++ b/runner.py
+@@ -1,4 +1,5 @@
+ def build_cmd(user):
++    return subprocess.run(user, shell=True)

@@ -1,0 +1,8 @@
+diff --git a/db.py b/db.py
+index 1111111..2222222 100644
+--- a/db.py
++++ b/db.py
+@@ -1,4 +1,5 @@
+ def fetch(name):
++    cursor.execute("SELECT * FROM users WHERE name='" + name + "'")
+     return cursor

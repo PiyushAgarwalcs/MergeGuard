@@ -1,0 +1,13 @@
+diff --git a/handler.py b/handler.py
+index 1111111..2222222 100644
+--- a/handler.py
++++ b/handler.py
+@@ -3,4 +3,6 @@
+     value = input()
++    if debug:
++        print(value)
+     return value
+@@ -20,3 +20,4 @@
+ def worker():
++    shells = ["bash", "sh"]
+     return shells

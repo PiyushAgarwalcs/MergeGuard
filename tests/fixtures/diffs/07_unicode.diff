@@ -1,0 +1,7 @@
+diff --git a/unicode.py b/unicode.py
+index 1111111..2222222 100644
+--- a/unicode.py
++++ b/unicode.py
+@@ -1,2 +1,3 @@
+ def emoji():
++    return "😃"

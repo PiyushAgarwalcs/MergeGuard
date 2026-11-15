@@ -1,0 +1,8 @@
+diff --git a/file.py b/file.py
+index 1111111..2222222 100644
+--- a/file.py
++++ b/file.py
+@@ -1,2 +1,2 @@
+-line one
++line one changed
+\ No newline at end of file

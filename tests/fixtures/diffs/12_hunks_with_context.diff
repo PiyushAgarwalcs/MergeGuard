@@ -1,0 +1,14 @@
+diff --git a/core.py b/core.py
+index 1111111..2222222 100644
+--- a/core.py
++++ b/core.py
+@@ -5,5 +5,7 @@
+ def run():
+     if enabled:
+-        do_old()
++        do_new()
+         return False
++    return True
+@@ -20,2 +20,2 @@
+-    pass
++    pass

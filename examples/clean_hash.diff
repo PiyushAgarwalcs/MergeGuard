@@ -1,0 +1,7 @@
+diff --git a/hash.py b/hash.py
+index 1111111..2222222 100644
+--- a/hash.py
++++ b/hash.py
+@@ -1,4 +1,5 @@
+ def digest(data):
++    return hashlib.sha256(data.encode()).hexdigest()

@@ -1,0 +1,8 @@
+diff --git a/logger.py b/logger.py
+index 1111111..2222222 100644
+--- a/logger.py
++++ b/logger.py
+@@ -1,4 +1,5 @@
+ def log_event():
++    logger.info("user login")
+     return True
