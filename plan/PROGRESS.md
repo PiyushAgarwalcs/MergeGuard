@@ -33,7 +33,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P3.3** Mechanical validators
 - [x] **P3.4** Mutation-verified bug cases
 - [x] **P3.5** Hard negatives, presumed clean, test gaps
-- [ ] **P3.6** Injection wrappers, variants, verifier attacks
+- [x] **P3.6** Injection wrappers, variants, verifier attacks
 - [ ] **P3.7** Build, split, canaries, manifest, stats
 
 ## Phase 4: Evaluation harness, component evals, dashboard base
@@ -103,3 +103,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-15: Completed P3.3 with text-only unified-diff application, syntax/location/quote checks, and Bandit/rule-scanner agreement where supported. Verified with `make check` under Python 3.11; 137 tests passed. Next: P3.4 mutation-verified correctness cases.
 2026-11-15: Completed P3.4 with 12 AST-generated correctness mutations (two per category), each retained only after its copied sample app's tests failed. Added regression sentinels for the mutations. Verified with `make check` under Python 3.11; 146 tests passed. Next: P3.5 hard negatives, presumed-clean cases and test gaps.
 2026-11-15: Completed P3.5 with 20 safe hard negatives, 30 presumed-clean diffs (12 docs, 6 refactors, 12 tested features), and 10 test-gap examples spanning missing, weakened and removed tests plus covered changes. Verified patch evidence, static-tool behavior and isolated sample suites with `make check` under Python 3.11; 150 tests passed. Next: P3.6 injection wrappers, variants and verifier attacks.
+2026-11-15: Completed P3.6 with 12 prompt-injection wrappers across code, README and PR metadata, label-preserving comment/reformat/rename/reorder variants, and four rejected verifier attacks per seeded finding. Verified metamorphic findings and exact rejection reasons with `make check` under Python 3.11; 153 tests passed. Next: P3.7 dataset build, splits, canaries, manifest and stats.
