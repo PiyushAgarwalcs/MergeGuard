@@ -9,6 +9,7 @@ from pathlib import Path
 
 from evals.config import EvalConfig
 from evals.results import SuiteCaseResult, SuiteResult
+from evals.suites.component_context import evaluate_context_collector
 from evals.suites.component_decisions import evaluate_risk_and_judge
 from evals.suites.component_parsing import evaluate_diff_parser
 from evals.suites.component_scanning import (
@@ -39,6 +40,7 @@ def run(config: EvalConfig) -> SuiteResult:
         )
         risk_metrics, decision_cases = evaluate_risk_and_judge()
         webhook_rate, webhook_cases = _evaluate_webhook()
+        context_accuracy, context_cases = evaluate_context_collector()
         metrics = {
             "diff_parser_line_accuracy": parser_accuracy,
             "secret_scanner_recall": secret_recall,
@@ -49,6 +51,7 @@ def run(config: EvalConfig) -> SuiteResult:
             "verifier_genuine_rejection_rate": genuine_rejection_rate,
             **risk_metrics,
             "webhook_valid_first_acceptance_rate": webhook_rate,
+            "context_collector_accuracy": context_accuracy,
         }
         repeated_cases = (
             parser_cases
@@ -58,6 +61,7 @@ def run(config: EvalConfig) -> SuiteResult:
             + verifier_cases
             + decision_cases
             + webhook_cases
+            + context_cases
         )
         cases.extend(replace(case, repeat=repeat) for case in repeated_cases)
     return SuiteResult(

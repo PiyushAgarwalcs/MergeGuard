@@ -47,7 +47,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 ## Phase 5: Model client, context, first agent, agent evals
 
 - [x] **P5.1** LLM client with modes and scripted fake
-- [ ] **P5.2** Context collector
+- [x] **P5.2** Context collector
 - [ ] **P5.3** Prompt loader and security prompt
 - [ ] **P5.4** Security reviewer agent
 - [ ] **P5.5** Security reviewer eval suite
@@ -112,4 +112,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed Phase 4: threshold-gated eval runner, all L1 component suites, base dashboard pages, append-only review logging, and static HTML report. Phase verification passed: `python -m evals.run --layer components` saved a passing run with 704 case outcomes; `pytest tests/dashboard` passed (8); `make check` passed on Python 3.11 (200 tests). Generated `evals/results/report.html` from the saved component run. Next: P5.1 LLM client with modes and scripted fake.
 
 2026-11-16: Completed P5.1 with live/record/replay/off modes, SHA-256 request cache, tolerant JSON parsing, Pydantic validation and one repair retry, timeout handling, tracing, and ScriptedLLM coverage. Focused client tests passed (11); make check passed on Python 3.11 (211 tests). No credentials were needed. Next: P5.2 context collector.
+
+
+2026-11-16: Completed P5.2 with an AST-based collector for callers, test references, sibling functions and fixture-backed CI status; unknown CI is missing. Context blocks are capped at 40 blocks, 1,600 characters each and 12,000 total. Added known-call-graph component cases and path traversal checks. make check passed on Python 3.11 (216 tests). Next: P5.3 security reviewer prompt.
 

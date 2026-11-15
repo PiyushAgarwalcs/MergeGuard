@@ -179,6 +179,8 @@ class Approval(BaseModel):
 
 class ReviewState(TypedDict, total=False):
     pr: PullRequest
+    repo_path: str
+    ci_status: Literal["passing", "failing", "missing"]
     context: ReviewContext
     findings: list[Finding]
     rejected: list[Rejection]

@@ -24,6 +24,8 @@ suites:
       min: 1.0
     webhook_valid_first_acceptance_rate:
       min: 1.0
+    context_collector_accuracy:
+      min: 1.0
 
 targets:
   unsafe_pass_rate_canary:
