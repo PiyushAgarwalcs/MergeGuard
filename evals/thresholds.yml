@@ -41,6 +41,8 @@ suites:
     format_reliability: {min: 1.0}
   pipeline:
     unsafe_pass_rate: {max: 0.0}
+  regression:
+    gate_self_test: {min: 1.0}
 
 targets:
   unsafe_pass_rate_canary:
