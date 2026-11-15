@@ -81,7 +81,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P8.4** Consistency suite
 - [x] **P8.5** Judge calibration scaffolding
 - [x] **P8.6** CI tiers and nightly workflow
-- [ ] **P8.7** Dashboard pages for layers, compare, consistency, judge
+- [x] **P8.7** Dashboard pages for layers, compare, consistency, judge
 - [ ] **P8.8** Save first baseline
 
 ## Phase 9: Dashboard completion, monitoring, documentation, final report
@@ -163,3 +163,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P8.4 with a five-repeat minimum consistency suite on the test split, reporting decision agreement, pairwise finding Jaccard, flip rate, and per-case flaky tags. `python -m evals.run --layer consistency --cases 2` passed (agreement 1.0, Jaccard 1.0); `make check` passed on Python 3.11 (283 passed, 1 skipped). Next: P8.5 judge calibration scaffolding.
 2026-11-16: Completed P8.5 with the judge rubric and JSONL template, Cohen kappa and tie-aware Spearman helpers, complete-row loading, and 40-sample calibration threshold. Evaluation suite and per-case judge metrics now carry calibrated/uncalibrated markers. `make check` passed on Python 3.11 (287 passed, 1 skipped). Next: P8.6 CI tiers and nightly workflow.
 2026-11-16: Completed P8.6 with a pull-request tier for make check, L1, L3, fake L5, L2/L4 smoke sets, and baseline regression comparison. Added saved-run gate CLI and a clear self-test fallback until the first baseline is committed. Added credential-gated nightly live L2/L4/L5 runs at three repeats and weekly five-repeat L6 plus ablations. Workflow YAML parsed; `make check` passed on Python 3.11 (290 passed, 1 skipped). Next: P8.7 dashboard pages.
+2026-11-16: Completed P8.7 with read-only dashboard pages for layer summaries, run comparison and flipped cases, consistency/flaky cases, and judge calibration coverage/agreement. AppTest passed on empty and populated databases, including populated comparison and flaky details. `make check` passed on Python 3.11 (291 passed, 1 skipped). Next: P8.8 save first baseline.
