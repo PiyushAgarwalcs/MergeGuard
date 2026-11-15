@@ -64,6 +64,14 @@ def test_github_client_reads_pr_ci_and_updates_single_comment() -> None:
         )
         assert status["state"] == "pending"
         assert status["context"] == "mergeguard"
+        assert (
+            client.set_commit_status("acme", "widget", pr.head_sha, "pass", "Passed")["state"]
+            == "success"
+        )
+        assert (
+            client.set_commit_status("acme", "widget", pr.head_sha, "block", "Blocked")["state"]
+            == "failure"
+        )
         assert len(client.list_open_pull_requests("acme", "widget")) == 1
 
 
