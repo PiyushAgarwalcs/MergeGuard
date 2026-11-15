@@ -65,7 +65,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 ## Phase 7: GitHub integration, human approval, resilience
 
-- [ ] **P7.1** GitHub client
+- [x] **P7.1** GitHub client
 - [ ] **P7.2** Human gate and commands
 - [ ] **P7.3** review-pr command
 - [ ] **P7.4** Polling watch mode
@@ -144,4 +144,6 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P6.6 with all six graph variants run on 212 dev cases, paired bootstrap intervals (1,000 resamples, seed 42), SQLite-persisted per-variant case results, and the measured report in docs/evaluation.md. Stub results show single_agent matches full on finding recall (0.451), precision (0.687), and unsafe-pass (0); no_rules loses 0.389 recall points. CI is missing, so all variants safely return needs_human; these are not live-model quality claims. Pipeline and ablation replay commands both completed. make check passed on Python 3.11 (247 tests). Next: P6.7 dashboard pages.
 
 2026-11-16: Completed P6.7 with pipeline confusion/slice and unsafe-pass views, an ablation comparison page, and cost/latency summaries with per-agent recorded-call aggregates. Added read-only cached queries and AppTest coverage of all pages on populated and empty databases. make check passed on Python 3.11 (247 tests). Phase 6 verification completed: review CLI on examples/flawed_shell.diff produced a decision; full pipeline and ablation replay runs saved 212-case results. Next: P7.1 GitHub integration.
+
+2026-11-16: Completed P7.1 with an injectable httpx GitHub REST client for PR metadata/diff/files, combined status and check runs, one marked MergeGuard comment, commit statuses, issue comments and open PRs. Added pagination, bounded backoff for server/rate-limit responses, recorded HTTP fixtures, and a credential-gated read-only live test. make check passed on Python 3.11 (250 passed, 1 skipped). The live test skipped because GitHub credentials are not configured; recorded in BLOCKERS.md. Next: P7.2 human gate and commands.
 

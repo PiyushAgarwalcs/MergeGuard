@@ -67,3 +67,6 @@ python_version = "3.11"
 warn_return_any = true
 disallow_untyped_defs = true
 check_untyped_defs = true
+
+[tool.pytest.ini_options]
+markers = ["live: requires external credentials and contacts the configured test service"]

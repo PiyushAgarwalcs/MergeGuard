@@ -1,0 +1,8 @@
+{
+  "number": 7,
+  "title": "Fix report export",
+  "body": "Update the export handler.",
+  "user": {"login": "fixture-author"},
+  "head": {"sha": "0123456789abcdef0123456789abcdef01234567"},
+  "base": {"sha": "abcdef0123456789abcdef0123456789abcdef01"}
+}
