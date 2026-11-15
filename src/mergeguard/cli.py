@@ -27,6 +27,7 @@ from mergeguard.github import GitHubAPIError, GitHubClient
 from mergeguard.graph import build_graph
 from mergeguard.llm_fake import ScriptedLLM
 from mergeguard.models import Decision, Finding, PullRequest
+from mergeguard.monitoring import shadow_report as build_shadow_report
 from mergeguard.storage import (
     connect,
     find_review_run,
@@ -44,6 +45,12 @@ runs_app = typer.Typer(help="Inspect saved review traces")
 eval_app = typer.Typer(help="Run and report evaluation suites")
 app.add_typer(runs_app, name="runs")
 app.add_typer(eval_app, name="eval")
+
+
+@app.command("shadow-report")
+def shadow_report() -> None:
+    """Summarize shadow reviews, category dismissal rates, and approvals after blocks."""
+    typer.echo(json.dumps(build_shadow_report(), sort_keys=True, default=str))
 
 
 def _run_id_from_diff(diff_file: Path) -> str:

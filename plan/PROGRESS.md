@@ -87,7 +87,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 ## Phase 9: Dashboard completion, monitoring, documentation, final report
 
 - [x] **P9.1** Live runs page
-- [ ] **P9.2** Monitoring helpers
+- [x] **P9.2** Monitoring helpers
 - [ ] **P9.3** Documentation
 - [ ] **P9.4** README with real results
 - [ ] **P9.5** Code-quality pass
@@ -166,3 +166,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P8.7 with read-only dashboard pages for layer summaries, run comparison and flipped cases, consistency/flaky cases, and judge calibration coverage/agreement. AppTest passed on empty and populated databases, including populated comparison and flaky details. `make check` passed on Python 3.11 (291 passed, 1 skipped). Next: P8.8 save first baseline.
 2026-11-16: Completed P8.8 by saving and committing the first baseline from full replay runs for components, integration, robustness, agent security, other agents, pipeline, and regression (925 cases total). The saved PR-tier comparison passed; it reported two non-failing missing paired-interval warnings. Regression eval and gate self-test passed, including the deliberate degradation rejection. `make check` passed on Python 3.11 (291 passed, 1 skipped). Next: P9.1 live runs dashboard.
 2026-11-16: Completed P9.1 with the live-runs page showing review decisions, findings, event trace, human feedback, last-hour operational alerts, and pipeline metric drift over 14 days versus the saved baseline. Added cached read-only queries and populated/empty database AppTest coverage. `make check` passed on Python 3.11 (292 passed, 1 skipped). Next: P9.2 monitoring helpers.
+2026-11-16: Completed P9.2 with `mergeguard shadow-report`, a persisted summary of shadow-mode runs, dismissal rates by finding category, and approvals/overrides after blocked runs. Tests cover summary content and CLI JSON output. `make check` passed on Python 3.11 (294 passed, 1 skipped). Next: P9.3 documentation.
