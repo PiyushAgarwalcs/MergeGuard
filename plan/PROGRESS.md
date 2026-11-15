@@ -28,7 +28,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 ## Phase 3: Golden dataset v0.1 (template-based, no model needed)
 
-- [ ] **P3.1** Three sample apps with tests
+- [x] **P3.1** Three sample apps with tests
 - [ ] **P3.2** Template seeders for 12 security categories
 - [ ] **P3.3** Mechanical validators
 - [ ] **P3.4** Mutation-verified bug cases
@@ -98,3 +98,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-15: Completed the Phase 0 skeleton: Python 3.11 package layout, typed settings/models, Makefile and CI, and verified with `make check` under the Python 3.11 toolchain. Next session should resume with the first Phase 1 task: P1.1 Diff parser.
 2026-11-15: Completed Phase 1 deterministic core: diff parsing, redaction, rule-based scanning, finding verification, dedupe/id assignment, risk scoring, and CLI review behavior. Verified with `make check` under Python 3.11; 69 tests passed.
 2026-11-15: Completed Phase 2 storage and tracing: SQLite WAL-backed persistence, run/event/finding models, run listing/show commands, privacy-safe diff hashing, and concurrency-safe writes. Verified with `make check` under Python 3.11; 73 tests passed.
+2026-11-15: Completed P3.1 with three MIT-licensed sample applications and 49 focused app tests. Verified all apps meet the 300–600 Python-line plan and `make check` passes on Python 3.11; 122 tests passed. Next: P3.2 template seeders for the 12 security categories.
