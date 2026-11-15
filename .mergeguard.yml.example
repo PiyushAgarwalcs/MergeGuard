@@ -1,0 +1,9 @@
+approvers: [github-username]
+risk_threshold: 71
+max_diff_lines: 2000
+stricter_paths:
+  - src/auth/**
+  - infra/**
+ignore_paths:
+  - '**/*.lock'
+  - vendor/**
