@@ -64,8 +64,8 @@ def test_execute_evaluation_runs_checks_bars_and_persists_results(tmp_path):
         layer="components",
         dataset_version="v0.1",
         repeats=1,
-        metrics={"accuracy": 1.0},
-        cases=(SuiteCaseResult("case-1", 1, True, {"x": 1}, {"x": 1}),),
+        metrics={"accuracy": 1.0, "judge_clarity": 0.8},
+        cases=(SuiteCaseResult("case-1", 1, True, {"x": 1}, {"x": 1}, {"judge_accuracy": 0.6}),),
         eval_run_id="runner-1",
     )
     threshold_path = tmp_path / "thresholds.yml"
@@ -83,9 +83,16 @@ def test_execute_evaluation_runs_checks_bars_and_persists_results(tmp_path):
         saved = connection.execute(
             "SELECT summary FROM eval_runs WHERE eval_run_id = 'runner-1'"
         ).fetchone()
+        saved_case = connection.execute(
+            "SELECT metrics FROM eval_results WHERE eval_run_id = 'runner-1'"
+        ).fetchone()
         assert execution.passed
         assert execution.case_count == 1
-        assert json.loads(saved["summary"])["thresholds_passed"] is True
+        summary = json.loads(saved["summary"])
+        assert summary["thresholds_passed"] is True
+        assert summary["judge_clarity"]["calibration"] == "uncalibrated"
+        assert summary["judge_calibration"]["sample_count"] == 0
+        assert json.loads(saved_case["metrics"])["judge_accuracy"]["calibration"] == "uncalibrated"
     finally:
         connection.close()
 

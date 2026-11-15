@@ -17,6 +17,7 @@ import yaml
 from evals.baseline import BASELINE_PATH, save_baselines
 from evals.compare import compare_runs, render_markdown
 from evals.config import EvalConfig
+from evals.judges.calibration import annotate_judge_metrics, load_calibration_samples
 from evals.results import SuiteResult, save_suite_result
 from evals.suites.ablations import run as run_ablations
 from evals.suites.agent_security import run as run_agent_security
@@ -121,13 +122,23 @@ def execute_evaluation(
     if suite_result.layer != config.layer:
         raise ValueError("Suite result layer does not match the requested layer.")
     threshold_check = check_thresholds(suite_result.metrics, bars)
+    calibration_count = len(load_calibration_samples())
+    annotated_metrics = annotate_judge_metrics(suite_result.metrics, calibration_count)
+    annotated_cases = tuple(
+        replace(
+            case,
+            metrics=annotate_judge_metrics(case.metrics, calibration_count),
+        )
+        for case in suite_result.cases
+    )
     persisted = replace(
         suite_result,
         metrics={
-            **suite_result.metrics,
+            **annotated_metrics,
             "thresholds_passed": threshold_check.passed,
             "threshold_bars": list(threshold_check.bars),
         },
+        cases=annotated_cases,
     )
     owns_connection = connection is None
     store = connection or connect()
@@ -139,7 +150,7 @@ def execute_evaluation(
     return EvalExecution(
         suite_result.eval_run_id,
         threshold_check.passed,
-        suite_result.metrics,
+        annotated_metrics,
         threshold_check.bars,
         len(suite_result.cases),
     )
