@@ -78,7 +78,7 @@ def calculate_risk(findings: list[Finding], files: list[str], ci_status: str | N
         score += RISK_STRICTER_PATHS
     if _source_without_test(files):
         score += RISK_SOURCE_WITHOUT_TEST
-    if ci_status in {"failing", "missing"}:
+    if ci_status in {"failing", "missing", None}:
         score += RISK_CI_FAILING
     if _dependency_file_changed(files):
         score += RISK_DEPENDENCY_FILE
@@ -123,7 +123,7 @@ def judge_run(state: ReviewState | dict[str, object]) -> dict[str, Decision]:
             )
         }
 
-    if ci_status in {"failing", "missing"}:
+    if ci_status in {"failing", "missing", None}:
         reasons.append("CI is failing or missing for this commit.")
         return {
             "decision": Decision(

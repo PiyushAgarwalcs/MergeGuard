@@ -14,22 +14,12 @@ from pathlib import Path
 
 import yaml
 
+from evals.config import EvalConfig
 from evals.results import SuiteResult, save_suite_result
+from evals.suites.components import run as run_components
 from mergeguard.storage import connect
 
 THRESHOLDS_PATH = Path(__file__).with_name("thresholds.yml")
-
-
-@dataclass(frozen=True)
-class EvalConfig:
-    """Shared input settings passed to a suite runner."""
-
-    layer: str
-    split: str | None = None
-    repeats: int = 1
-    cases: int | None = None
-    mode: str = "replay"
-    dataset_version: str = "v0.1"
 
 
 @dataclass(frozen=True)
@@ -52,7 +42,7 @@ class EvalExecution:
 
 
 SuiteRunner = Callable[[EvalConfig], SuiteResult]
-SUITE_RUNNERS: dict[str, SuiteRunner] = {}
+SUITE_RUNNERS: dict[str, SuiteRunner] = {"components": run_components}
 
 
 def load_thresholds(path: Path = THRESHOLDS_PATH) -> dict[str, object]:

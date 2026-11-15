@@ -40,7 +40,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 - [x] **P4.1** Stats, matching and result storage
 - [x] **P4.2** Thresholds and eval runner CLI
-- [ ] **P4.3** L1 component suites
+- [x] **P4.3** L1 component suites
 - [ ] **P4.4** Dashboard base pages and smoke tests
 - [ ] **P4.5** Static HTML report command
 
@@ -107,3 +107,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-15: Completed P3.7 with deterministic build/validate/stats commands, SHA-256 split assignment, content-hash manifest, 15 canaries, deduplicated representation variants, and 356 validated cases. Phase verification passed: all planned source counts, `validate` reported no errors, stats reported 212 dev / 144 test and 15 canaries; `make check` passed on Python 3.11 (157 tests). Next: P4.1 evaluation stats, matching and result storage.
 2026-11-16: Completed P4.1 with Wilson intervals, small-sample summaries, deterministic paired bootstrap, one-to-one finding matching and unsafe-pass summaries. Suite and case outcomes persist atomically with Git code version, prompt/model metadata and dataset version. `make check` passed on Python 3.11; 171 tests passed. Next: P4.2 thresholds and eval runner CLI.
 2026-11-16: Completed P4.2 with starting metric targets, component bars, threshold validation, explicit suite registration, and `python -m evals.run` arguments for layer/split/repeats/cases/mode. Suite results persist with bar outcomes; a missing metric fails its bar. `make check` passed on Python 3.11; 180 tests passed. Next: P4.3 L1 component suites.
+2026-11-16: Completed P4.3 with 50 diff parser cases, 150 secret/redactor snippets, v0.1 pattern cases, 240 verifier cases, risk/judge properties and truth table, plus webhook signature and replay checks. `python -m evals.run --layer components --split test` saved a passing result; bars were all met (parser 1.0, secret recall 1.0, placeholder FP 0.0, redaction 1.0, verifier false acceptance/rejection 0.0, judge accuracy 1.0, webhook 1.0). `make check` passed on Python 3.11; 188 tests passed. Next: P4.4 dashboard base pages and smoke tests.

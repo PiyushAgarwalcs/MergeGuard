@@ -5,9 +5,9 @@ import json
 
 import pytest
 
+from evals.config import EvalConfig
 from evals.results import SuiteCaseResult, SuiteResult
 from evals.run import (
-    EvalConfig,
     check_thresholds,
     execute_evaluation,
     load_thresholds,

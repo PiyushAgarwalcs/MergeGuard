@@ -466,12 +466,12 @@ def insert_delivery(
     row = {"delivery_id": delivery_id, "received_at": received_at or _utciso()}
 
     def _op(conn: sqlite3.Connection) -> dict[str, Any]:
-        conn.execute(
+        cursor = conn.execute(
             "INSERT OR IGNORE INTO deliveries (delivery_id, received_at) VALUES (?, ?)",
             (row["delivery_id"], row["received_at"]),
         )
         conn.commit()
-        return row
+        return {**row, "inserted": cursor.rowcount == 1}
 
     return _with_connection(connection, _op)
 
