@@ -49,7 +49,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P5.1** LLM client with modes and scripted fake
 - [x] **P5.2** Context collector
 - [x] **P5.3** Prompt loader and security prompt
-- [ ] **P5.4** Security reviewer agent
+- [x] **P5.4** Security reviewer agent
 - [ ] **P5.5** Security reviewer eval suite
 - [ ] **P5.6** LLM-assisted dataset growth (v0.2)
 
@@ -118,4 +118,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 
 2026-11-16: Completed P5.3 with the versioned security reviewer prompt covering all 12 security categories, untrusted diff/context delimiters, exact quote and evidence requirements, output schema, and empty-list behavior. Verified prompt rendering; make check passed on Python 3.11 (217 tests). Next: P5.4 security reviewer agent.
+
+
+2026-11-16: Completed P5.4 with a state-based security reviewer that renders the versioned prompt, validates returned Finding objects and marks model/validation failures as incomplete. Scripted tests cover a valid finding, malformed output with exactly one retry then failure, and a complete empty result. make check passed on Python 3.11 (220 tests). Next: P5.5 security reviewer evaluation.
 

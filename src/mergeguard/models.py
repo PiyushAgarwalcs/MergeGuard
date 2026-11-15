@@ -181,7 +181,9 @@ class ReviewState(TypedDict, total=False):
     pr: PullRequest
     repo_path: str
     ci_status: Literal["passing", "failing", "missing"]
+    run_id: str
     context: ReviewContext
+    complete: bool
     findings: list[Finding]
     rejected: list[Rejection]
     verdicts: list[SkepticVerdict]
