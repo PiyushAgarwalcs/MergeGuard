@@ -33,6 +33,7 @@ class Settings(BaseModel):
     LLM_API_KEY: str = ""
     REVIEWER_MODEL: str = "gpt-4o-mini"
     SKEPTIC_MODEL: str = "gpt-4o-mini"
+    CROSS_CHECK_MODEL: str = ""
     JUDGE_MODEL: str = "gpt-4o-mini"
     GENERATOR_MODEL: str = "gpt-4o-mini"
     LLM_MODE: Literal["live", "record", "replay", "off"] = "replay"

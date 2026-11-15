@@ -7,7 +7,8 @@
 | `LLM_BASE_URL`, `LLM_API_KEY` | phase 4 (live), phase 3 (optional) | any OpenAI-compatible API |
 | `REVIEWER_MODEL` | phase 4 | the three reviewers |
 | `SKEPTIC_MODEL`, `JUDGE_MODEL` | phase 5 | should be a different model family from the reviewers |
-| `GENERATOR_MODEL` | phase 3 (optional) | dataset seeding and cross-check |
+| `GENERATOR_MODEL` | phase 3 (optional) | dataset seeding |
+| `CROSS_CHECK_MODEL` | phase 5 (optional) | independent LLM seed verification; must use a different model family than `GENERATOR_MODEL` (falls back to `SKEPTIC_MODEL`) |
 | `LLM_MODE` | always | live, record, replay, off. Default `replay` in tests and CI |
 | `MERGEGUARD_GITHUB_TOKEN`, `TEST_REPO` | phase 7 | fine-grained token for a throwaway test repo |
 | `MERGEGUARD_WEBHOOK_SECRET` | optional | webhook mode only |

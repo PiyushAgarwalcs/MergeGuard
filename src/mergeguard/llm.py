@@ -207,6 +207,8 @@ def _model_for_agent(agent: str) -> str:
     """Select the configured model family for a specialist agent."""
     if agent == "skeptic":
         return settings.SKEPTIC_MODEL
+    if agent == "cross_check":
+        return settings.CROSS_CHECK_MODEL or settings.SKEPTIC_MODEL
     if agent == "judge":
         return settings.JUDGE_MODEL
     if agent in {"generator", "seed_issue"}:

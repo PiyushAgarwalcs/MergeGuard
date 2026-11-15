@@ -15,9 +15,11 @@ def main() -> int:
     for command in ("build", "validate", "stats"):
         command_parser = subparsers.add_parser(command)
         command_parser.add_argument("--version", required=True)
+        if command == "build":
+            command_parser.add_argument("--llm", action="store_true")
     args = parser.parse_args()
     if args.command == "build":
-        result = build_dataset(args.version)
+        result = build_dataset(args.version, llm=args.llm)
     elif args.command == "validate":
         errors = validate_dataset(args.version)
         result = {"valid": not errors, "errors": errors}

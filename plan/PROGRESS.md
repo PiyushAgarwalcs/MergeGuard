@@ -51,7 +51,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P5.3** Prompt loader and security prompt
 - [x] **P5.4** Security reviewer agent
 - [x] **P5.5** Security reviewer eval suite
-- [ ] **P5.6** LLM-assisted dataset growth (v0.2)
+- [x] **P5.6** LLM-assisted dataset growth (v0.2)
 
 ## Phase 6: The agent team, the graph, pipeline evals, ablations
 
@@ -123,5 +123,8 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P5.4 with a state-based security reviewer that renders the versioned prompt, validates returned Finding objects and marks model/validation failures as incomplete. Scripted tests cover a valid finding, malformed output with exactly one retry then failure, and a complete empty result. make check passed on Python 3.11 (220 tests). Next: P5.5 security reviewer evaluation.
 
 
-2026-11-16: Completed P5.5 with an agent-only dev-split suite measuring per-category recall, precision, localization, quote validity, severity agreement, hard-negative and presumed-clean false-positive rates, and completion. Results persist through the eval harness. With no LLM credentials, the documented scanner-backed stub ran as eviewer_mode=stub; the required replay command passed and saved 54 cases (precision 1.0, localization 1.0, quote validity 1.0, hard-negative FP 0.0; per-category recall stored). make check passed on Python 3.11 (221 tests). Next: P5.6 LLM-assisted dataset growth.
+2026-11-16: Completed P5.5 with an agent-only dev-split suite measuring per-category recall, precision, localization, quote validity, severity agreement, hard-negative and presumed-clean false-positive rates, and completion. Results persist through the eval harness. With no LLM credentials, the documented scanner-backed stub ran as reviewer_mode=stub; the required replay command passed and saved 54 cases (precision 1.0, localization 1.0, quote validity 1.0, hard-negative FP 0.0; per-category recall stored). make check passed on Python 3.11 (221 tests). Next: P5.6 LLM-assisted dataset growth.
+
+
+2026-11-16: Completed P5.6 with seed_issue.v1 generation, exact-diff evidence validation, an independently routed cross-check model, and redacted disagreement review-queue entries. Added build --version v0.2 --llm; the no-credentials command printed a clear skip and exited 0 without creating v0.2. Scripted generation/cross-check and no-write tests passed; make check passed on Python 3.11 (225 tests). Live LLM growth was not run because credentials are unavailable.
 
