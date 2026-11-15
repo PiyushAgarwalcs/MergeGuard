@@ -6,12 +6,13 @@ from __future__ import annotations
 import json
 import uuid
 from pathlib import Path
-from typing import cast
+from typing import Annotated, cast
 
 import typer
 from rich.console import Console
 from rich.table import Table
 
+from evals.report import DEFAULT_REPORT_PATH, write_static_report
 from mergeguard.checks.judge import judge_run
 from mergeguard.checks.merge_findings import merge_findings
 from mergeguard.checks.rule_scan import scan_diff
@@ -23,7 +24,9 @@ from mergeguard.tracing import record, span
 console = Console()
 app = typer.Typer(add_completion=False, help="MergeGuard CLI")
 runs_app = typer.Typer(help="Inspect saved review traces")
+eval_app = typer.Typer(help="Run and report evaluation suites")
 app.add_typer(runs_app, name="runs")
+app.add_typer(eval_app, name="eval")
 
 
 def _run_id_from_diff(diff_file: Path) -> str:
@@ -167,6 +170,10 @@ def eval_fast() -> None:
     typer.echo("eval-fast command placeholder")
 
 
-@app.command()
-def report() -> None:
-    typer.echo("report command placeholder")
+@eval_app.command("report")
+def eval_report(
+    output: Annotated[Path, typer.Option(help="HTML report destination.")] = DEFAULT_REPORT_PATH,
+) -> None:
+    """Write a static HTML summary of the latest evaluation per layer."""
+    report_path = write_static_report(output)
+    typer.echo(f"Wrote evaluation report to {report_path}")

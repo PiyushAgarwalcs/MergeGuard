@@ -632,6 +632,20 @@ def insert_eval_bundle(
     return _with_connection(connection, _op)
 
 
+def list_eval_runs(
+    limit: int = 200, *, connection: sqlite3.Connection | None = None
+) -> list[dict[str, Any]]:
+    """Return saved evaluation runs from newest to oldest."""
+
+    def _op(conn: sqlite3.Connection) -> list[dict[str, Any]]:
+        rows = conn.execute(
+            "SELECT * FROM eval_runs ORDER BY started_at DESC LIMIT ?", (limit,)
+        ).fetchall()
+        return [dict(row) for row in rows]
+
+    return _with_connection(connection, _op)
+
+
 __all__ = [
     "connect",
     "get_events",
@@ -645,6 +659,7 @@ __all__ = [
     "insert_feedback",
     "insert_finding",
     "insert_run",
+    "list_eval_runs",
     "list_runs",
     "migrate",
 ]
