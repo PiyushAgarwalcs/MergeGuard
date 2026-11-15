@@ -26,6 +26,11 @@ suites:
       min: 1.0
     context_collector_accuracy:
       min: 1.0
+  agent_security:
+    complete_rate:
+      min: 1.0
+    quote_validity:
+      min: 0.9
 
 targets:
   unsafe_pass_rate_canary:

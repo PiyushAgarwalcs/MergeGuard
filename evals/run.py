@@ -16,6 +16,7 @@ import yaml
 
 from evals.config import EvalConfig
 from evals.results import SuiteResult, save_suite_result
+from evals.suites.agent_security import run as run_agent_security
 from evals.suites.components import run as run_components
 from mergeguard.storage import connect
 
@@ -42,7 +43,10 @@ class EvalExecution:
 
 
 SuiteRunner = Callable[[EvalConfig], SuiteResult]
-SUITE_RUNNERS: dict[str, SuiteRunner] = {"components": run_components}
+SUITE_RUNNERS: dict[str, SuiteRunner] = {
+    "agent_security": run_agent_security,
+    "components": run_components,
+}
 
 
 def load_thresholds(path: Path = THRESHOLDS_PATH) -> dict[str, object]:
