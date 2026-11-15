@@ -35,27 +35,34 @@ class GateCommand:
 
 def run(state: ReviewState) -> dict[str, Any]:
     """Interrupt for an explicit human command and apply the validated approval."""
-    decision = state.get("decision")
-    pr = state.get("pr")
+    current = dict(state)
+    decision = cast(Decision | None, current.get("decision"))
     if decision is None or decision.outcome == "pass":
         return {"approval": None}
-    if pr is None:
+    if current.get("pr") is None:
         return {"approval": None, "incomplete": True}
-    findings = cast(list[Finding], state.get("decision_findings", []))
-    resume = interrupt(
-        {
-            "kind": "approval_required",
-            "run_id": state.get("run_id", ""),
-            "head_sha": pr.head_sha,
-            "outcome": decision.outcome,
-            "reasons": decision.reasons,
-            "finding_ids": [finding.id for finding in findings],
-        }
-    )
-    payload = resume.get("approval", resume) if isinstance(resume, dict) else resume
-    approval = Approval.model_validate(payload)
-    _validate_approval(approval, state)
-    return _apply_approval(approval, state)
+    while True:
+        decision = cast(Decision, current["decision"])
+        pr = cast(Any, current["pr"])
+        findings = cast(list[Finding], current.get("decision_findings", []))
+        resume = interrupt(
+            {
+                "kind": "approval_required",
+                "run_id": current.get("run_id", ""),
+                "head_sha": pr.head_sha,
+                "outcome": decision.outcome,
+                "reasons": decision.reasons,
+                "finding_ids": [finding.id for finding in findings],
+            }
+        )
+        payload = resume.get("approval", resume) if isinstance(resume, dict) else resume
+        approval = Approval.model_validate(payload)
+        _validate_approval(approval, cast(ReviewState, current))
+        updated = _apply_approval(approval, cast(ReviewState, current))
+        current.update(updated)
+        updated_decision = cast(Decision, current["decision"])
+        if updated_decision.outcome == "pass":
+            return updated
 
 
 def parse_command(text: str) -> GateCommand:

@@ -68,7 +68,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P7.1** GitHub client
 - [x] **P7.2** Human gate and commands
 - [x] **P7.3** review-pr command
-- [ ] **P7.4** Polling watch mode
+- [x] **P7.4** Polling watch mode
 - [ ] **P7.5** Webhook server
 - [ ] **P7.6** Graph integration and fault tests
 - [ ] **P7.7** Threat model and run-it docs
@@ -150,4 +150,6 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P7.2 with strict approve/override/dismiss parsing, .mergeguard.yml approver checks, stale head SHA rejection, action-specific rules, feedback/event persistence, and a LangGraph interrupt that resumes from the SQLite checkpoint. Approve/override updates the final decision; dismiss removes an active finding and re-runs the judge. Tests cover parser errors, unauthorized users, stale SHAs, override and dismiss rules, and a checkpointed approve/resume. make check passed on Python 3.11 (254 passed, 1 skipped). Next: P7.3 review-pr command.
 
 2026-11-16: Completed P7.3 with `mergeguard review-pr owner/repo#N`: it fetches PR metadata, diff, changed files and CI; runs the checkpointed review graph; stores findings/run state; and publishes the commit status plus the single MergeGuard report comment. Tests verify target parsing and pass/success and needs_human/pending publication mappings; API tests cover block/failure. make check passed on Python 3.11 (258 passed, 1 skipped). Next: P7.4 polling watch mode.
+
+2026-11-16: Completed P7.4 with `mergeguard watch owner/repo --shadow --interval N`, open-PR polling, and exact repo/PR/head idempotency. Waiting runs inspect comments from approvers and resume their saved checkpoint; shadow mode records without posting. A dismissed finding that still needs review re-interrupts instead of losing the waiting state. Tests cover new/unchanged heads, changed-head processing, shadow no-post behavior, and command-driven resume. make check passed on Python 3.11 (260 passed, 1 skipped). Next: P7.5 webhook server.
 

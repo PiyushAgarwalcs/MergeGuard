@@ -252,6 +252,26 @@ def get_run(run_id: str, *, connection: sqlite3.Connection | None = None) -> dic
     return _with_connection(connection, _op)
 
 
+def find_review_run(
+    repo: str,
+    pr_number: int,
+    head_sha: str,
+    *,
+    connection: sqlite3.Connection | None = None,
+) -> dict[str, Any] | None:
+    """Find the existing review for one repository, PR number and exact head SHA."""
+
+    def _op(conn: sqlite3.Connection) -> dict[str, Any] | None:
+        row = conn.execute(
+            """SELECT * FROM runs WHERE repo = ? AND pr_number = ? AND head_sha = ?
+               ORDER BY started_at DESC LIMIT 1""",
+            (repo, pr_number, head_sha),
+        ).fetchone()
+        return _row_to_dict(row)
+
+    return _with_connection(connection, _op)
+
+
 def list_runs(
     limit: int = 50, *, connection: sqlite3.Connection | None = None
 ) -> list[dict[str, Any]]:
@@ -648,6 +668,7 @@ def list_eval_runs(
 
 __all__ = [
     "connect",
+    "find_review_run",
     "get_events",
     "get_findings",
     "get_run",
