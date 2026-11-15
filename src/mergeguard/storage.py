@@ -577,12 +577,68 @@ def insert_eval_result(
     return _with_connection(connection, _op)
 
 
+def insert_eval_bundle(
+    run: dict[str, Any],
+    results: list[dict[str, Any]],
+    *,
+    connection: sqlite3.Connection | None = None,
+) -> dict[str, Any]:
+    """Atomically save one evaluation run and its per-case result rows."""
+
+    def _op(conn: sqlite3.Connection) -> dict[str, Any]:
+        with conn:
+            conn.execute(
+                """
+                INSERT INTO eval_runs (
+                    eval_run_id, started_at, layer, dataset_version, code_version,
+                    prompt_versions, model_config, repeats, is_baseline, summary)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    run["eval_run_id"],
+                    run["started_at"],
+                    run["layer"],
+                    run["dataset_version"],
+                    run["code_version"],
+                    run["prompt_versions"],
+                    run["model_config"],
+                    run["repeats"],
+                    run["is_baseline"],
+                    run["summary"],
+                ),
+            )
+            conn.executemany(
+                """
+                INSERT INTO eval_results (
+                    eval_run_id, case_id, repeat, passed, expected, actual, metrics, run_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                [
+                    (
+                        run["eval_run_id"],
+                        item["case_id"],
+                        item["repeat"],
+                        item["passed"],
+                        item["expected"],
+                        item["actual"],
+                        item["metrics"],
+                        item["run_id"],
+                    )
+                    for item in results
+                ],
+            )
+        return {**run, "case_count": len(results)}
+
+    return _with_connection(connection, _op)
+
+
 __all__ = [
     "connect",
     "get_events",
     "get_findings",
     "get_run",
     "insert_delivery",
+    "insert_eval_bundle",
     "insert_eval_result",
     "insert_eval_run",
     "insert_event",
