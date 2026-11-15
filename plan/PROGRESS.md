@@ -48,7 +48,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 - [x] **P5.1** LLM client with modes and scripted fake
 - [x] **P5.2** Context collector
-- [ ] **P5.3** Prompt loader and security prompt
+- [x] **P5.3** Prompt loader and security prompt
 - [ ] **P5.4** Security reviewer agent
 - [ ] **P5.5** Security reviewer eval suite
 - [ ] **P5.6** LLM-assisted dataset growth (v0.2)
@@ -115,4 +115,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 
 2026-11-16: Completed P5.2 with an AST-based collector for callers, test references, sibling functions and fixture-backed CI status; unknown CI is missing. Context blocks are capped at 40 blocks, 1,600 characters each and 12,000 total. Added known-call-graph component cases and path traversal checks. make check passed on Python 3.11 (216 tests). Next: P5.3 security reviewer prompt.
+
+
+2026-11-16: Completed P5.3 with the versioned security reviewer prompt covering all 12 security categories, untrusted diff/context delimiters, exact quote and evidence requirements, output schema, and empty-list behavior. Verified prompt rendering; make check passed on Python 3.11 (217 tests). Next: P5.4 security reviewer agent.
 
