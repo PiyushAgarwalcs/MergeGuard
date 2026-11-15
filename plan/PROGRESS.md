@@ -56,7 +56,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 ## Phase 6: The agent team, the graph, pipeline evals, ablations
 
 - [x] **P6.1** Correctness and test reviewers
-- [ ] **P6.2** Skeptic agent
+- [x] **P6.2** Skeptic agent
 - [ ] **P6.3** Reporter
 - [ ] **P6.4** LangGraph pipeline with ablation variants
 - [ ] **P6.5** Agent and pipeline eval suites
@@ -130,4 +130,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 
 2026-11-16: Completed P6.1 with correctness and test reviewers, category/source-restricted Pydantic response schemas, versioned prompts, bounded diff/context instructions, and visible incomplete status on failures. Scripted tests cover valid, out-of-scope retry failure, and empty findings. make check passed on Python 3.11 (229 tests). Next: P6.2 skeptic agent.
+
+
+2026-11-16: Completed P6.2 with a skeptical verdict agent that receives one finding, its exact containing hunk, and only its cited context evidence. The orchestration helper filters out rule findings and low-severity findings, and marks missing hunks or invalid verdicts incomplete. Scripted tests confirm rule findings are never sent. make check passed on Python 3.11 (232 tests). Next: P6.3 reporter.
 

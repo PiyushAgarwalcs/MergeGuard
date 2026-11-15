@@ -183,6 +183,8 @@ class ReviewState(TypedDict, total=False):
     ci_status: Literal["passing", "failing", "missing"]
     run_id: str
     context: ReviewContext
+    finding: Finding
+    hunk: Hunk
     complete: bool
     findings: list[Finding]
     rejected: list[Rejection]
