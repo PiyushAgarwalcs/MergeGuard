@@ -66,7 +66,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 ## Phase 7: GitHub integration, human approval, resilience
 
 - [x] **P7.1** GitHub client
-- [ ] **P7.2** Human gate and commands
+- [x] **P7.2** Human gate and commands
 - [ ] **P7.3** review-pr command
 - [ ] **P7.4** Polling watch mode
 - [ ] **P7.5** Webhook server
@@ -146,4 +146,6 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P6.7 with pipeline confusion/slice and unsafe-pass views, an ablation comparison page, and cost/latency summaries with per-agent recorded-call aggregates. Added read-only cached queries and AppTest coverage of all pages on populated and empty databases. make check passed on Python 3.11 (247 tests). Phase 6 verification completed: review CLI on examples/flawed_shell.diff produced a decision; full pipeline and ablation replay runs saved 212-case results. Next: P7.1 GitHub integration.
 
 2026-11-16: Completed P7.1 with an injectable httpx GitHub REST client for PR metadata/diff/files, combined status and check runs, one marked MergeGuard comment, commit statuses, issue comments and open PRs. Added pagination, bounded backoff for server/rate-limit responses, recorded HTTP fixtures, and a credential-gated read-only live test. make check passed on Python 3.11 (250 passed, 1 skipped). The live test skipped because GitHub credentials are not configured; recorded in BLOCKERS.md. Next: P7.2 human gate and commands.
+
+2026-11-16: Completed P7.2 with strict approve/override/dismiss parsing, .mergeguard.yml approver checks, stale head SHA rejection, action-specific rules, feedback/event persistence, and a LangGraph interrupt that resumes from the SQLite checkpoint. Approve/override updates the final decision; dismiss removes an active finding and re-runs the judge. Tests cover parser errors, unauthorized users, stale SHAs, override and dismiss rules, and a checkpointed approve/resume. make check passed on Python 3.11 (254 passed, 1 skipped). Next: P7.3 review-pr command.
 

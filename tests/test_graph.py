@@ -98,7 +98,7 @@ def test_graph_routes_pass_and_human_decisions(isolated_graph: Path) -> None:
     assert passing["decision"].outcome == "pass"
     assert passing["report"].startswith("## MergeGuard review")
     assert needs_human["decision"].outcome == "needs_human"
-    assert needs_human["approval"] is None
+    assert needs_human["__interrupt__"][0].value["kind"] == "approval_required"
 
 
 def test_graph_empty_diff_skips_reviewers(isolated_graph: Path) -> None:
@@ -106,10 +106,13 @@ def test_graph_empty_diff_skips_reviewers(isolated_graph: Path) -> None:
     clients = _clients()
 
     async def invoke_empty():
-        graph = build_graph(clients=clients)
-        return await graph.ainvoke(
-            {"pr": _pr(""), "incomplete": False},
-        )
+        async with AsyncSqliteSaver.from_conn_string(str(isolated_graph)) as saver:
+            await saver.setup()
+            graph = build_graph(checkpointer=saver, clients=clients)
+            return await graph.ainvoke(
+                {"pr": _pr(""), "incomplete": False},
+                config={"configurable": {"thread_id": "empty-diff"}},
+            )
 
     result = asyncio.run(invoke_empty())
 
@@ -132,4 +135,7 @@ def test_graph_supports_each_ablation(isolated_graph: Path, variant: str) -> Non
     result = _invoke(isolated_graph, variant=variant)
 
     assert result["decision"].outcome in {"pass", "needs_human", "block"}
-    assert result["report"].startswith("## MergeGuard review")
+    if result["decision"].outcome == "pass":
+        assert result["report"].startswith("## MergeGuard review")
+    else:
+        assert result["__interrupt__"][0].value["kind"] == "approval_required"
