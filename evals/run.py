@@ -25,6 +25,7 @@ from evals.suites.components import run as run_components
 from evals.suites.graph_integration import run as run_graph_integration
 from evals.suites.pipeline import run as run_pipeline
 from evals.suites.regression import run as run_regression
+from evals.suites.robustness import run as run_robustness
 from mergeguard.storage import connect
 
 THRESHOLDS_PATH = Path(__file__).with_name("thresholds.yml")
@@ -58,6 +59,7 @@ SUITE_RUNNERS: dict[str, SuiteRunner] = {
     "integration": run_graph_integration,
     "pipeline": run_pipeline,
     "regression": run_regression,
+    "robustness": run_robustness,
 }
 
 

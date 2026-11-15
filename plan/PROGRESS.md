@@ -77,7 +77,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 - [x] **P8.1** Compare tool and baseline save
 - [x] **P8.2** Regression gate with self-test
-- [ ] **P8.3** Robustness suites
+- [x] **P8.3** Robustness suites
 - [ ] **P8.4** Consistency suite
 - [ ] **P8.5** Judge calibration scaffolding
 - [ ] **P8.6** CI tiers and nightly workflow
@@ -159,3 +159,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P7.7 with the threat model, trust boundaries, token permissions, residual risks, operator checklist, and README instructions for local, PR, polling, and webhook use. Phase 7 verification: `python -m evals.run --layer integration` passed (5/5); `make check` passed (269 passed, 1 skipped). Live GitHub checks remain credential-gated as recorded in BLOCKERS.md.
 2026-11-16: Completed P8.1 with saved-run comparisons, paired bootstrap intervals for shared numeric case metrics, flipped-case lists, Markdown output, and `baseline save` snapshots of the newest run per layer. Added CLI commands and tests for comparison, baseline JSON, and active baseline metadata. `make check` passed on Python 3.11 (274 passed, 1 skipped). Next: P8.2 regression gate and self-test.
 2026-11-16: Completed P8.2 with regression gates for unsafe passes, verifier acceptance, schema validity, paired-interval recall/false-positive/agreement drops, L1 bars, and cost/latency warnings. Added the passing-baseline/degraded-stub self-test as the regression eval layer. `python -m evals.run --layer regression` passed; `make check` passed on Python 3.11 (280 passed, 1 skipped). Next: P8.3 robustness suites.
+2026-11-16: Completed P8.3 with fake and credential-gated live robustness modes. The L5 fake suite ran 12 injection wrappers against unwrapped diffs and five odd inputs; it reported zero decision changes, zero visible marker leaks, zero crashes, and marked empty/oversized diffs incomplete. Oversized diffs now fail closed before model calls. `python -m evals.run --layer robustness` passed all bars; `make check` passed on Python 3.11 (282 passed, 1 skipped). Next: P8.4 consistency suite.

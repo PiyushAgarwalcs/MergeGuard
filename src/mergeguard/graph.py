@@ -47,6 +47,7 @@ class GraphState(TypedDict, total=False):
     repo_path: str
     run_id: str
     ci_status: str
+    reviewable: bool
     context: ReviewContext
     findings: Annotated[list[Finding], operator.add]
     merged_findings: list[Finding]
@@ -175,6 +176,12 @@ def _collect_context(state: GraphState, *, variant: str) -> dict[str, Any]:
     pr = state.get("pr")
     if pr is None or not pr.diff:
         return {"context": ReviewContext(ci_status="missing"), "incomplete": True}
+    if len(pr.diff.splitlines()) > settings.MAX_DIFF_LINES:
+        return {
+            "context": ReviewContext(ci_status="missing"),
+            "incomplete": True,
+            "reviewable": False,
+        }
     if variant == "no_context":
         return {"context": ReviewContext(ci_status="missing")}
     return collect_context.run(cast(ReviewState, state))
@@ -183,7 +190,9 @@ def _collect_context(state: GraphState, *, variant: str) -> dict[str, Any]:
 def _after_context(state: GraphState) -> str:
     """Skip model nodes for an empty or missing diff."""
     pr = state.get("pr")
-    return "review" if pr is not None and bool(pr.diff) else "empty"
+    return (
+        "review" if state.get("reviewable", True) and pr is not None and bool(pr.diff) else "empty"
+    )
 
 
 def _scan_rules(state: GraphState, *, variant: str) -> dict[str, list[Finding]]:
