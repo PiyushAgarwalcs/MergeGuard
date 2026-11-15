@@ -86,7 +86,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 
 ## Phase 9: Dashboard completion, monitoring, documentation, final report
 
-- [ ] **P9.1** Live runs page
+- [x] **P9.1** Live runs page
 - [ ] **P9.2** Monitoring helpers
 - [ ] **P9.3** Documentation
 - [ ] **P9.4** README with real results
@@ -165,3 +165,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P8.6 with a pull-request tier for make check, L1, L3, fake L5, L2/L4 smoke sets, and baseline regression comparison. Added saved-run gate CLI and a clear self-test fallback until the first baseline is committed. Added credential-gated nightly live L2/L4/L5 runs at three repeats and weekly five-repeat L6 plus ablations. Workflow YAML parsed; `make check` passed on Python 3.11 (290 passed, 1 skipped). Next: P8.7 dashboard pages.
 2026-11-16: Completed P8.7 with read-only dashboard pages for layer summaries, run comparison and flipped cases, consistency/flaky cases, and judge calibration coverage/agreement. AppTest passed on empty and populated databases, including populated comparison and flaky details. `make check` passed on Python 3.11 (291 passed, 1 skipped). Next: P8.8 save first baseline.
 2026-11-16: Completed P8.8 by saving and committing the first baseline from full replay runs for components, integration, robustness, agent security, other agents, pipeline, and regression (925 cases total). The saved PR-tier comparison passed; it reported two non-failing missing paired-interval warnings. Regression eval and gate self-test passed, including the deliberate degradation rejection. `make check` passed on Python 3.11 (291 passed, 1 skipped). Next: P9.1 live runs dashboard.
+2026-11-16: Completed P9.1 with the live-runs page showing review decisions, findings, event trace, human feedback, last-hour operational alerts, and pipeline metric drift over 14 days versus the saved baseline. Added cached read-only queries and populated/empty database AppTest coverage. `make check` passed on Python 3.11 (292 passed, 1 skipped). Next: P9.2 monitoring helpers.

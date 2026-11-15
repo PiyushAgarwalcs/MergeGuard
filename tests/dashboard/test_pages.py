@@ -6,7 +6,14 @@ from pathlib import Path
 
 from streamlit.testing.v1 import AppTest
 
-from mergeguard.storage import connect, insert_eval_bundle
+from mergeguard.storage import (
+    connect,
+    insert_eval_bundle,
+    insert_event,
+    insert_feedback,
+    insert_finding,
+    insert_run,
+)
 from tests.make_sample_db import build_sample_db
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -22,6 +29,7 @@ PAGE_FILES = (
     REPOSITORY_ROOT / "dashboard" / "pages" / "8_Cost_Latency.py",
     REPOSITORY_ROOT / "dashboard" / "pages" / "9_Dataset.py",
     REPOSITORY_ROOT / "dashboard" / "pages" / "10_Judge_Calibration.py",
+    REPOSITORY_ROOT / "dashboard" / "pages" / "11_Live_Runs.py",
 )
 
 
@@ -124,3 +132,48 @@ def test_comparison_consistency_and_calibration_pages_show_saved_details(tmp_pat
         if filename == "5_Compare_Runs.py" and not app.exception:
             app.selectbox[0].set_value("pipeline-new").run()
         assert not app.exception, f"{page.name}: {app.exception}"
+
+
+def test_live_runs_page_shows_operational_details(tmp_path, monkeypatch):
+    sample_path = build_sample_db(tmp_path / "live.db")
+    connection = connect(sample_path)
+    try:
+        insert_run(
+            "review-1",
+            "owner/repo",
+            7,
+            "abc123",
+            status="complete",
+            outcome="needs_human",
+            connection=connection,
+        )
+        insert_finding(
+            "review-1",
+            {
+                "id": "F-1",
+                "source": "rules",
+                "category": "injection",
+                "severity": "high",
+                "file": "app.py",
+                "line_start": 2,
+                "line_end": 2,
+                "quote": "unsafe",
+                "verified": True,
+            },
+            connection=connection,
+        )
+        insert_event(
+            "review-1", "judge", "decision", {"decision": "needs_human"}, connection=connection
+        )
+        insert_feedback(
+            "review-1", "F-1", "dismiss", "reviewer", "not exploitable", connection=connection
+        )
+    finally:
+        connection.close()
+    monkeypatch.setenv("DATABASE_PATH", str(sample_path))
+    page = REPOSITORY_ROOT / "dashboard" / "pages" / "11_Live_Runs.py"
+    app = AppTest.from_file(str(page), default_timeout=30).run()
+    assert not app.exception, app.exception
+    assert any("owner/repo" in str(frame.value) for frame in app.dataframe)
+    app.selectbox[0].set_value("review-1").run()
+    assert not app.exception, app.exception
