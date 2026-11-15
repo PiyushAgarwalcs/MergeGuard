@@ -96,13 +96,13 @@ def patterns() -> list[CategoryPattern]:
             (
                 "    return hashlib.md5(token.encode()).hexdigest()",
                 "    return hashlib.sha1(token.encode()).hexdigest()",
-                "    return hashlib.md5(token.encode(), usedforsecurity=False).hexdigest()",
+                "    return hashlib.md5(token.encode()).hexdigest()[:12]",
                 "    return hashlib.sha1(token.encode()).hexdigest()[:12]",
             ),
             (
                 "    return hashlib.md5(token.encode()).hexdigest()",
                 "    return hashlib.sha1(token.encode()).hexdigest()",
-                "    return hashlib.md5(token.encode(), usedforsecurity=False).hexdigest()",
+                "    return hashlib.md5(token.encode()).hexdigest()[:12]",
                 "    return hashlib.sha1(token.encode()).hexdigest()[:12]",
             ),
             "A weak hash is used for a credential-derived identifier.",
