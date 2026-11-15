@@ -16,6 +16,7 @@ import yaml
 
 from evals.config import EvalConfig
 from evals.results import SuiteResult, save_suite_result
+from evals.suites.ablations import run as run_ablations
 from evals.suites.agent_security import run as run_agent_security
 from evals.suites.agents_other import run as run_agents_other
 from evals.suites.components import run as run_components
@@ -48,6 +49,7 @@ SuiteRunner = Callable[[EvalConfig], SuiteResult]
 SUITE_RUNNERS: dict[str, SuiteRunner] = {
     "agent_security": run_agent_security,
     "agents_other": run_agents_other,
+    "ablations": run_ablations,
     "components": run_components,
     "pipeline": run_pipeline,
 }

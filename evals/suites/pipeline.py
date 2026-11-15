@@ -151,7 +151,14 @@ def run(config: EvalConfig) -> SuiteResult:
     )
 
 
-def _review(record: dict[str, Any], diff: str) -> dict[str, Any]:
+def _review(
+    record: dict[str, Any],
+    diff: str,
+    variant: str = "full",
+    *,
+    use_stub: bool = True,
+    mode: str = "replay",
+) -> dict[str, Any]:
     files = sorted({hunk.file for hunk in parse_diff(diff)})
     digest = hashlib.sha256(diff.encode()).hexdigest()
     pr = PullRequest(
@@ -165,15 +172,27 @@ def _review(record: dict[str, Any], diff: str) -> dict[str, Any]:
         diff=diff,
         files=files,
     )
+    clients = (
+        {
+            name: ScriptedLLM([[]])
+            for name in (
+                "security_reviewer",
+                "correctness_reviewer",
+                "test_reviewer",
+                "single_reviewer",
+                "skeptic",
+            )
+        }
+        if use_stub
+        else None
+    )
     graph = build_graph(
         checkpointer=InMemorySaver(),
-        clients={
-            name: ScriptedLLM([[]])
-            for name in ("security_reviewer", "correctness_reviewer", "test_reviewer", "skeptic")
-        },
+        variant=variant,
+        clients=clients,
     )
     previous_mode = settings.LLM_MODE
-    settings.LLM_MODE = "record"
+    settings.LLM_MODE = "record" if use_stub or mode == "live" else "replay"
     try:
         result = asyncio.run(
             graph.ainvoke(
