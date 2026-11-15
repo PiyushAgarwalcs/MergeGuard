@@ -78,7 +78,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P8.1** Compare tool and baseline save
 - [x] **P8.2** Regression gate with self-test
 - [x] **P8.3** Robustness suites
-- [ ] **P8.4** Consistency suite
+- [x] **P8.4** Consistency suite
 - [ ] **P8.5** Judge calibration scaffolding
 - [ ] **P8.6** CI tiers and nightly workflow
 - [ ] **P8.7** Dashboard pages for layers, compare, consistency, judge
@@ -160,3 +160,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P8.1 with saved-run comparisons, paired bootstrap intervals for shared numeric case metrics, flipped-case lists, Markdown output, and `baseline save` snapshots of the newest run per layer. Added CLI commands and tests for comparison, baseline JSON, and active baseline metadata. `make check` passed on Python 3.11 (274 passed, 1 skipped). Next: P8.2 regression gate and self-test.
 2026-11-16: Completed P8.2 with regression gates for unsafe passes, verifier acceptance, schema validity, paired-interval recall/false-positive/agreement drops, L1 bars, and cost/latency warnings. Added the passing-baseline/degraded-stub self-test as the regression eval layer. `python -m evals.run --layer regression` passed; `make check` passed on Python 3.11 (280 passed, 1 skipped). Next: P8.3 robustness suites.
 2026-11-16: Completed P8.3 with fake and credential-gated live robustness modes. The L5 fake suite ran 12 injection wrappers against unwrapped diffs and five odd inputs; it reported zero decision changes, zero visible marker leaks, zero crashes, and marked empty/oversized diffs incomplete. Oversized diffs now fail closed before model calls. `python -m evals.run --layer robustness` passed all bars; `make check` passed on Python 3.11 (282 passed, 1 skipped). Next: P8.4 consistency suite.
+2026-11-16: Completed P8.4 with a five-repeat minimum consistency suite on the test split, reporting decision agreement, pairwise finding Jaccard, flip rate, and per-case flaky tags. `python -m evals.run --layer consistency --cases 2` passed (agreement 1.0, Jaccard 1.0); `make check` passed on Python 3.11 (283 passed, 1 skipped). Next: P8.5 judge calibration scaffolding.
