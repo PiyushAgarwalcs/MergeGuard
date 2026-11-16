@@ -1,5 +1,30 @@
 # Evaluation
 
+## Running the suites
+
+From the repository root, use Python 3.11 with the project installed (`python -m pip install -e '.[dev]'`). Each run is persisted in `DATABASE_PATH` (by default `data/mergeguard.db`). Use `--mode replay` for offline evaluation; `--mode live` requires provider credentials and sends dataset diffs to that provider. Component, integration, robustness, regression, agent, pipeline, consistency, and ablation layers are registered in `evals/run.py`.
+
+```bash
+python -m evals.run --layer components --mode replay
+python -m evals.run --layer integration --mode replay
+python -m evals.run --layer robustness --mode replay
+python -m evals.run --layer agent_security --split test --mode replay
+python -m evals.run --layer agents_other --split test --mode replay
+python -m evals.run --layer pipeline --split test --mode replay
+python -m evals.run --layer consistency --split test --repeats 5 --mode replay
+python -m evals.run --layer ablations --split dev --mode replay
+python -m evals.run --layer regression --mode replay
+python -m evals.run gate
+```
+
+`--cases N` limits a smoke run; `--repeats N` controls repeated suites. Tune only on `dev`; use `test` for reported evaluation. `python -m evals.run baseline save` snapshots the latest saved run per layer to `evals/baselines/main.json`. Change this file only with a reviewed baseline update. `python -m evals.run compare RUN_A RUN_B` prints metric differences and changed cases. The gate self-check is `python -m evals.run gate-self-test`.
+
+## Reading the dashboard
+
+Start it with `streamlit run dashboard/app.py`. Pages read from the configured SQLite file and do not modify it. **Layers** summarizes saved suite metrics; **Pipeline** shows confusion and dataset slices; **Case Explorer** inspects labels and case outcomes; **Compare Runs** shows metric deltas and flipped cases; **Consistency** exposes flaky cases; **Ablations** compares graph variants; **Cost & Latency** shows recorded call aggregates; **Dataset** shows corpus counts; **Judge Calibration** reports paired human ratings and calibration status; **Live Runs** displays operational review decisions, findings, trace, feedback, last-hour alerts, and 14-day pipeline drift versus the saved baseline. Empty-state messages mean the database does not contain that data.
+
+The seeded stub ablation outcome below is a reproducibility check, not a claim about live model quality. In particular, the apparent equality between full and single-agent variants results from scripted reviewers returning empty findings while the deterministic scanner drives detections.
+
 ## Phase 6 ablations (stub)
 
 Ran 212 paired development cases across 6 variants for 1 repeat(s).

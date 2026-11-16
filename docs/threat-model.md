@@ -27,6 +27,10 @@ The judge uses the fixed decision order in `plan/01-decisions-and-scope.md`: ver
 
 The published GitHub status is `success` for pass, `pending` for needs_human, and `failure` for block. Configure branch protection to require the `mergeguard` status if it is being used as a merge gate. MergeGuard does not enable auto-merge.
 
+## Monitoring and feedback
+
+The Live Runs dashboard reads operational events and feedback from SQLite. It flags elevated JSON-failure and timeout rates and unhandled errors over the last hour, and compares recent pipeline evaluation metrics with the saved baseline over a rolling 14-day window. `mergeguard shadow-report` summarizes shadow reviews and dismissal feedback by category, and lists approvals or overrides recorded after a block. These signals are for operator review: feedback does not automatically change thresholds, prompts, or model behavior. The alert rates depend on events being recorded and should be treated as monitoring aids rather than proof that a service is healthy.
+
 ## Operator checklist
 
 - Store credentials in environment secrets or a local ignored `.env`; never commit them.
