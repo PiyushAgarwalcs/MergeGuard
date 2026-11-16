@@ -18,7 +18,7 @@ from evals.suites.dataset_cases import load_cases
 from mergeguard.checks.diff_parser import parse_diff
 from mergeguard.graph import build_graph
 from mergeguard.llm_fake import ScriptedLLM
-from mergeguard.models import PullRequest
+from mergeguard.models import Decision, PullRequest
 from mergeguard.settings import settings
 
 
@@ -215,12 +215,23 @@ def _review(
 async def _invoke_review(
     graph: Any, state: dict[str, Any], config: dict[str, Any]
 ) -> dict[str, Any]:
-    """Read the checkpointed state when the graph pauses at the human gate."""
+    """Return a safe decision when the graph pauses at the human gate."""
     result = await graph.ainvoke(state, config=config)
     if "decision" in result:
         return result
     snapshot = await graph.aget_state(config)
-    return dict(snapshot.values) if snapshot.values else result
+    saved_state = {**state, **dict(snapshot.values)}
+    if "decision" not in saved_state:
+        pr = saved_state["pr"]
+        saved_state["decision"] = Decision(
+            outcome="needs_human",
+            reasons=["Review paused before a decision was checkpointed."],
+            head_sha=pr.head_sha,
+            risk_score=0,
+            complete=False,
+        )
+    saved_state.setdefault("decision_findings", saved_state.get("verified_findings", []))
+    return saved_state
 
 
 def _confusion(observations: list[dict[str, Any]]) -> dict[str, dict[str, int]]:

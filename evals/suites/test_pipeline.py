@@ -7,7 +7,6 @@ from typing import Any
 from evals.config import EvalConfig
 from evals.suites import pipeline
 from evals.suites.pipeline import run
-from mergeguard.models import Decision
 from mergeguard.settings import settings
 
 
@@ -26,15 +25,13 @@ def test_pipeline_suite_runs_graph_and_reports_l4_metrics(monkeypatch) -> None:
 
 
 def test_review_reads_checkpoint_state_when_graph_interrupts(monkeypatch) -> None:
-    decision = Decision(outcome="needs_human", head_sha="head-sha", risk_score=0, complete=False)
-    state = {"decision": decision, "decision_findings": []}
-
     class InterruptedGraph:
         async def ainvoke(self, *_args: Any, **_kwargs: Any) -> dict[str, Any]:
+            self.state = _args[0]
             return {"__interrupt__": []}
 
         async def aget_state(self, _config: dict[str, Any]) -> SimpleNamespace:
-            return SimpleNamespace(values=state)
+            return SimpleNamespace(values=self.state)
 
     monkeypatch.setattr(pipeline, "build_graph", lambda **_kwargs: InterruptedGraph())
 
