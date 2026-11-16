@@ -30,7 +30,7 @@
 - [Local LLM & Provider Configuration](#-local-llm--provider-configuration)
 - [Dashboard & Observability](#-dashboard--observability)
 - [Threat Model & Fail-Closed Philosophy](#-threat-model--fail-closed-philosophy)
-- [Contributing & Interview Story](#-contributing--interview-story)
+- [Contributing & Technical Documentation](#-contributing--technical-documentation)
 
 ---
 
@@ -284,10 +284,13 @@ Read the detailed [Threat Model Document](docs/threat-model.md) for complete spe
 
 ---
 
-## 🤝 Contributing & Interview Story
+## 🤝 Contributing & Technical Documentation
 
-- For contributing guidelines, dev setup, and coding conventions, see **[CONTRIBUTING.md](CONTRIBUTING.md)**.
-- For interview preparation, technical talking points, and design trade-offs, read **[docs/resume-story.md](docs/resume-story.md)**.
+- **[Architecture Decisions & Engineering Rationale](docs/architecture-decisions.md)**: Deep dive into design trade-offs, fail-closed safety mechanics, and multi-agent vs single-agent ablation findings.
+- **[How It Works](docs/how-it-works.md)**: Execution flow, reviewer mechanics, and deterministic AST parsing details.
+- **[Evaluation Methodology](docs/evaluation.md)**: Breakdown of all 9 evaluation layers, 356-case golden dataset, and regression gates.
+- **[Threat Model & Security](docs/threat-model.md)**: Adversarial trust boundaries, diff prompt-injection defenses, and fail-closed policies.
+- **[Contributing Guide](CONTRIBUTING.md)**: Local developer environment setup, testing standards, and pull request procedures.
 
 ---
 
