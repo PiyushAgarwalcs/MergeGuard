@@ -91,7 +91,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P9.3** Documentation
 - [x] **P9.4** README with real results
 - [x] **P9.5** Code-quality pass
-- [ ] **P9.6** Final report
+- [x] **P9.6** Final report
 
 ## Session notes
 
@@ -171,3 +171,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P9.4 with the replay-mode install/review/dashboard quick start, architecture diagram, measured `v0.1` test results from the saved SQLite baseline, ablation context, and limits/non-goals. Moved dashboard runtime packages into base dependencies and included `evals`/`dashboard` packages in installation after the quick-start smoke test exposed missing `evals.report`. `pip install -e .` succeeded; local review returned the expected needs-human result without a replay cache; Streamlit health returned HTTP 200. `make check` passed on Python 3.11 (294 passed, 1 skipped). Next: P9.5 code-quality pass.
 2026-11-16: Completed P9.5 by splitting oversized review, graph, storage, tracing, human-gate, dashboard, and dataset modules; preserving public import/patch points; adding missing module headers; matching `.env.example` keys/defaults to `Settings`; and removing the placeholder `eval-fast` command while fixing its Make target to run components and integration replay suites. Added a settings/environment consistency test. `make check` passed (295 passed, 1 skipped); `make eval-fast` passed both suites. Next: P9.6 final report.
 2026-11-16: P9.5 follow-up: changed the storage/tracing tests to use `tmp_path` instead of deleting the default `data/mergeguard.db`. This preserves operator data when `make check` runs. `make check` passed (295 passed, 1 skipped).
+2026-11-16: Completed P9.6 and wrote `plan/FINAL-REPORT.md` with the built system, latest SQLite pipeline results, measured ablation, deviations, credential blockers, limitations, and next steps. Phase 9 verification passed: `make check` (295 passed, 1 skipped); `pip install -e .` succeeded; the README sample review returned the documented `needs_human` result without replay/model credentials; Streamlit health returned HTTP 200. All planned tasks are checked. The live GitHub test remains skipped because credentials are unavailable.
