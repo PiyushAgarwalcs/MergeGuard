@@ -6,19 +6,19 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import mergeguard.settings as settings_module
+from mergeguard import storage
 from mergeguard.storage import connect, get_events, get_run, insert_event, insert_run, list_runs
 from mergeguard.tracing import record, record_llm_call
 
 
-def _reset_db() -> None:
-    path = Path("data/mergeguard.db")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    if path.exists():
-        path.unlink()
+def _reset_db(tmp_path: Path, monkeypatch) -> Path:
+    path = tmp_path / "mergeguard.db"
+    monkeypatch.setattr(storage, "DATABASE_PATH", str(path))
+    return path
 
 
-def test_storage_round_trip_and_trace() -> None:
-    _reset_db()
+def test_storage_round_trip_and_trace(tmp_path: Path, monkeypatch) -> None:
+    _reset_db(tmp_path, monkeypatch)
     conn = connect()
     try:
         run_id = "run-1"
@@ -50,8 +50,8 @@ def test_storage_round_trip_and_trace() -> None:
         conn.close()
 
 
-def test_privacy_mode_hashes_diff_text(monkeypatch) -> None:
-    _reset_db()
+def test_privacy_mode_hashes_diff_text(tmp_path: Path, monkeypatch) -> None:
+    _reset_db(tmp_path, monkeypatch)
     monkeypatch.setattr(settings_module.settings, "PRIVACY_MODE", True)
     record(
         "run-privacy",
@@ -68,8 +68,8 @@ def test_privacy_mode_hashes_diff_text(monkeypatch) -> None:
     assert payload["status"] == "ok"
 
 
-def test_record_llm_call_tracks_cost_and_hashes_output(monkeypatch) -> None:
-    _reset_db()
+def test_record_llm_call_tracks_cost_and_hashes_output(tmp_path: Path, monkeypatch) -> None:
+    _reset_db(tmp_path, monkeypatch)
     monkeypatch.setattr(settings_module.settings, "PRIVACY_MODE", True)
     event = record_llm_call(
         "run-llm",
@@ -88,8 +88,8 @@ def test_record_llm_call_tracks_cost_and_hashes_output(monkeypatch) -> None:
     assert "final answer" not in event["payload"]
 
 
-def test_concurrent_writers_do_not_corrupt_file() -> None:
-    _reset_db()
+def test_concurrent_writers_do_not_corrupt_file(tmp_path: Path, monkeypatch) -> None:
+    _reset_db(tmp_path, monkeypatch)
 
     def writer(index: int) -> None:
         conn = connect()
