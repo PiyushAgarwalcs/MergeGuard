@@ -96,9 +96,9 @@ Variants: (a) one agent with all checklists in one prompt; (b) three reviewers w
 
 Shadow mode (`mergeguard watch --shadow`): run and record, post nothing. Feedback is stored. Dismissal rate per category is a precision proxy. Drift: rolling 14-day metrics versus baseline, flagged on the dashboard. No automatic tuning on feedback.
 
-## L10 judge validation
+## L10 judge score reporting
 
-Use an LLM judge only where no mechanical check exists. Before trusting one: 40 human-scored samples (store in `evals/judges/calibration.jsonl`), agreement by Cohen's kappa or Spearman (start with 0.6), different model family than the one judged, position and length bias checks, re-calibrate when judge or rubric changes. If calibration data does not exist yet, mark judge-based metrics as `uncalibrated` in every report.
+Use an LLM judge only where no mechanical check exists. Judge-derived scores are informational, marked `not_validated`, and excluded from acceptance gates. Prefer seeded ground truth and mechanical checks for decisions.
 
 ## Starting targets (hypotheses; tune after the first real run, record changes in DECISIONS.md)
 

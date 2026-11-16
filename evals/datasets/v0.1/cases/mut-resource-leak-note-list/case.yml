@@ -21,5 +21,4 @@ provenance:
   - applies_cleanly
   - quote_on_line
   - sample_tests_fail
-  human_reviewed: false
   cross_check: skipped_no_model

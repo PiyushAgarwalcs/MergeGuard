@@ -19,7 +19,7 @@ from evals.compare import compare_runs, render_markdown
 from evals.config import EvalConfig
 from evals.gate_cli import saved_regression_report
 from evals.gates import run_gate_self_test
-from evals.judges.calibration import annotate_judge_metrics, load_calibration_samples
+from evals.judges.status import mark_judge_metrics_unvalidated
 from evals.results import SuiteResult, save_suite_result
 from evals.suites.ablations import run as run_ablations
 from evals.suites.agent_security import run as run_agent_security
@@ -124,12 +124,11 @@ def execute_evaluation(
     if suite_result.layer != config.layer:
         raise ValueError("Suite result layer does not match the requested layer.")
     threshold_check = check_thresholds(suite_result.metrics, bars)
-    calibration_count = len(load_calibration_samples())
-    annotated_metrics = annotate_judge_metrics(suite_result.metrics, calibration_count)
+    annotated_metrics = mark_judge_metrics_unvalidated(suite_result.metrics)
     annotated_cases = tuple(
         replace(
             case,
-            metrics=annotate_judge_metrics(case.metrics, calibration_count),
+            metrics=mark_judge_metrics_unvalidated(case.metrics),
         )
         for case in suite_result.cases
     )

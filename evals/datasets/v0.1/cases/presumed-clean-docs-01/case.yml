@@ -15,5 +15,4 @@ provenance:
   - quote_on_line
   - rule_scan_quiet
   - sample_tests
-  human_reviewed: false
   cross_check: skipped_no_model

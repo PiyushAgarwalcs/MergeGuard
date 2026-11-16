@@ -172,7 +172,6 @@ def _record_attack(attack: object, snapshot: str) -> dict[str, object]:
         "provenance": {
             "generated_by": "verifier_attack",
             "validators_passed": ["known_rejection"],
-            "human_reviewed": False,
             "cross_check": "skipped_no_model",
         },
         "diff": attack.diff,

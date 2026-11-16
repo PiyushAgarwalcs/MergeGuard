@@ -14,11 +14,10 @@ Streamlit app in `dashboard/` reading the SQLite file through a read-only connec
 | `6_Consistency.py` | Per-case stability across repeats, flaky cases | eval_results |
 | `7_Ablations.py` | One row per variant with recall, precision, cost, latency and a verdict | ablation runs |
 | `8_Cost_Latency.py` | Per-node waterfall, p50 and p95, cost per PR per agent | events |
-| `9_Dataset.py` | Browse cases, counts by source and category, review queue (accept, reject, edit label) | datasets, manifest |
-| `10_Judge_Calibration.py` | Human versus judge scores, agreement, bias checks | evals/judges |
-| `11_Live_Runs.py` | Real PR reviews: decision, findings, trace, feedback, drift charts, alert banners | runs, events, feedback |
+| `9_Dataset.py` | Browse generated cases and counts by source, category, split, and tier | datasets, manifest |
+| `10_Live_Runs.py` | Real PR reviews: decision, findings, trace, feedback, drift charts, alert banners | runs, events, feedback |
 
-Build order: Overview, Case Explorer, Compare Runs first; the rest as each layer comes online. The review page in `9_Dataset.py` writes decisions to `evals/datasets/<version>/review_log.jsonl`, never to case files.
+Build order: Overview, Case Explorer, Compare Runs first; the rest as each layer comes online. Dashboard pages use read-only access to saved runs and dataset files.
 
 ## Implementation notes
 

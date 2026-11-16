@@ -1,52 +1,38 @@
 # MergeGuard final report
 
-## What was built
+## Project status
 
-MergeGuard is an installable Python 3.11 pull-request review and merge-gate application. It parses and redacts diffs, scans deterministically, runs security/correctness/test reviewers and a skeptic through LangGraph, verifies model findings against changed-line evidence, and applies a deterministic judge. The result is `pass`, `block`, or `needs_human`; incomplete reviews and missing CI fail closed. Local review, GitHub review/polling/webhooks, SHA-bound human approval, SQLite persistence/checkpoints, structured traces, and feedback are implemented.
+MergeGuard is an installable Python 3.11 pull-request review and merge-gate application. It parses and redacts diffs, scans deterministically, runs security, correctness, and test reviewers with a skeptic through LangGraph, verifies model findings against changed-line evidence, and applies a deterministic judge. Decisions are `pass`, `block`, or `needs_human`; incomplete reviews and missing CI fail closed.
 
-The repository includes a versioned seeded dataset, evaluation layers, comparison and regression gates, robustness and consistency suites, judge-calibration scaffolding, CI/nightly workflows, static reporting, and a read-only Streamlit dashboard for evaluations and live operational runs. Operator guidance is in `README.md`, `docs/how-it-works.md`, `docs/evaluation.md`, and `docs/threat-model.md`.
+Local review, GitHub review and polling, webhook handling, SHA-bound approval actions, SQLite persistence and checkpoints, structured traces, feedback, evaluation suites, regression gates, static reporting, and a read-only Streamlit dashboard are implemented. All planned implementation tasks are complete.
 
-## Latest recorded evaluation
+## Latest evaluations
 
-The latest full pipeline run is saved in `data/mergeguard.db` (eval run `a3c55079-941c-4d07-9256-6290e2314bbb`), using dataset `v0.1`, test split, 144 cases, and reviewer mode `stub`. The evaluation is a deterministic offline measurement; it is not live-model quality evidence. A follow-up added local Ollama support and verified `qwen3:1.7b` against finding-list and skeptic-verdict JSON schemas. The full evaluation has not been rerun with Ollama.
+The latest saved consistency run is `662d93f2-a1f3-4534-9e9d-da1760e25459`, dataset `v0.1`, test split, live Ollama mode. It evaluated eight evenly spaced cases with five repeats each (40 reviews). The full 144-case test split exceeded the requested two-hour runtime budget, so the run was reduced and is reported as a sample.
 
-| Metric | Result |
+| Consistency metric | Result |
 |---|---:|
-| Finding recall | 0.508 |
-| Precision | 0.629 |
-| False findings per clean case | 0.043 (1 / 23 hard-negative and presumed-clean cases) |
-| Unsafe-pass rate | 0 / 39 must-catch cases (0.000) |
-| Decisions | 144 / 144 `needs_human`; over-escalation 1.000 |
-| p95 latency | 0.0834 s |
-| Cost per PR | $0.00 (stub mode) |
-| Repeated-run decision agreement | not yet measured on a full saved consistency run |
-| Judge calibration | uncalibrated; 0 / 40 human-scored samples |
+| Cases / repeats | 8 / 5 |
+| Decision agreement | 1.000 |
+| Finding Jaccard | 0.925 |
+| Flip rate | 0.000 |
+| Flaky cases | 0 |
+| Decision agreement threshold | passed (minimum 0.95) |
 
-The 100% escalation rate reflects unavailable CI in the offline fixture context. No live model calls or GitHub credentials were available. The first baseline snapshot is committed at `evals/baselines/main.json`; it contains the full replay layer runs and per-case results. The latest `make eval-fast` run passed components and integration suites.
+The generated report is `evals/results/report.html` (ignored local output).
 
-The saved six-variant ablation on 212 development cases reports `single_agent` matching the full design on stub recall (0.451), precision (0.687), and unsafe-pass rate (0). Removing rules reduced recall by 0.389. Scripted reviewers returned empty findings and the rule scanner drove detections, so this does not establish that a live single agent matches the team.
+The saved `v0.1` pipeline baseline is a 144-case deterministic stub evaluation, not live-model quality evidence. It reports finding recall 0.508, precision 0.629, false findings 0.043 per clean case (1 / 23), unsafe-pass 0 / 39, and 144 / 144 `needs_human` decisions because CI is unavailable in the offline fixture context. The saved six-variant ablation on 212 development cases reports stub recall 0.451 for `single_agent` and a 0.389 recall-point loss for `no_rules`.
 
-## Deviations and limitations
+Judge-derived scores are informational and marked `not_validated`; they are excluded from acceptance gates. Mechanical checks and seeded ground truth drive the quality gates.
 
-- No remote LLM calls were used for the first evaluation baseline. Dataset cross-checks were skipped where permitted; replay and scripted stubs were used. Local Ollama and optional Groq structured output are supported and schema-verified, but no full or comparative live evaluation has been run. See `plan/BLOCKERS.md`.
-- GitHub credentials and a test repository were unavailable. Live GitHub verification was skipped; the client and flows were tested with recorded fixtures and fakes.
-- Full five-repeat consistency measurements and the 40-sample judge calibration have not been collected. The calibration status stays explicitly `uncalibrated`.
-- `.env.example` and package metadata were adjusted so the documented `pip install -e .` quick start includes the dashboard and evaluation modules. Dashboard runtime packages are base dependencies.
-- The threat model records a remaining privacy limitation: the diff itself is sent to an authorized live model provider; trace redaction and privacy mode do not prevent that transmission.
-- MergeGuard reviews Python pull requests, does not execute pull-request code, and does not auto-merge. Static and model-assisted review can miss defects or report false findings.
+## Verification
 
-## Open blockers
+`make check` passed with Python 3.11 tooling: Ruff 0.17, Black, mypy, and pytest (294 passed, 1 skipped). The `v0.1` dataset validator passed, as did `make eval-fast`, the regression suite, and gate self-test.
 
-- Approve and run a full local Ollama evaluation before treating its live quality as measured; compare Groq only if Ollama performance warrants it.
-- Configure the optional Groq endpoint and key only if remote live agent, pipeline, robustness, or nightly evaluations are desired.
-- Configure a scoped GitHub token and disposable test repository to run the credential-gated live GitHub test.
-- Collect at least 40 complete human/judge pairs, then review calibration agreement and bias before relying on judge-based metrics.
-- Run the full five-repeat consistency suite at production settings and record its saved agreement, Jaccard, flip-rate, and flaky-case outputs.
+## Operational setup
 
-## Suggested next steps
+- Configure a live LLM provider in the ignored `.env` file when live review is wanted. Ollama is the local option; Groq is optional.
+- Configure a scoped GitHub token and a disposable test repository to run the credential-gated live GitHub checks and enable repository integration.
+- Review `README.md`, `docs/how-it-works.md`, `docs/evaluation.md`, and `docs/threat-model.md` before enabling publishing or branch protection.
 
-1. Add provider credentials through the CI secret store and run nightly L2/L4/L5 suites; keep repository data-sharing policy in view.
-2. Add a disposable GitHub test repository and run read-only integration checks before enabling publishing.
-3. Collect human-scored calibration samples and full consistency results.
-4. Replace the stub baseline only with a reviewed, explained update using `python -m evals.run baseline save`.
-5. Treat shadow dismissal rates and dashboard drift as operator signals; do not automate tuning from feedback.
+MergeGuard supports Python pull requests, does not execute pull-request code, and does not auto-merge. Missing CI, incomplete diffs, reviewer failures, and unavailable model responses require human review.

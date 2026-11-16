@@ -36,7 +36,6 @@ def _record(
         "provenance": {
             "generated_by": generated_by,
             "validators_passed": validators,
-            "human_reviewed": False,
             "cross_check": "skipped_no_model",
         },
         "diff": diff,

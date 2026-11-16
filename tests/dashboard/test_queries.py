@@ -1,4 +1,4 @@
-# Tests dashboard read-only database access and append-only dataset reviews.
+# Tests dashboard read-only database access and dataset browsing.
 # Temporary databases and cases isolate each query behavior.
 
 import sqlite3
@@ -9,14 +9,12 @@ import yaml
 
 from dashboard.queries import (
     _read_connection,
-    append_review_action,
     dataset_counts,
     latest_eval_run,
     list_eval_results,
     list_eval_runs,
     list_llm_event_summaries,
     load_dataset_cases,
-    load_review_log,
 )
 from tests.make_sample_db import build_sample_db
 
@@ -58,25 +56,6 @@ def test_dataset_counts_group_case_metadata(tmp_path):
     assert counts["total"] == 2
     assert counts["source"] == {"hard_negative": 1, "seeded": 1}
     assert counts["tier"] == {"canary": 1, "standard": 1}
-
-
-def test_review_action_appends_without_mutating_case_file(tmp_path):
-    """Record the reviewer decision in JSONL and preserve the original case."""
-    case_file = _write_case(tmp_path, "case-1", "seeded", "sql_injection", "dev", "canary")
-    original = case_file.read_text(encoding="utf-8")
-    record = append_review_action("v0.1", "case-1", "accept", "tester", "verified", tmp_path)
-    assert record["action"] == "accept"
-    assert case_file.read_text(encoding="utf-8") == original
-    assert load_review_log("v0.1", tmp_path)[0]["case_id"] == "case-1"
-
-
-def test_review_action_rejects_unknown_action_and_path(tmp_path):
-    """Refuse unsupported actions and case ids that escape the dataset root."""
-    _write_case(tmp_path, "case-1", "seeded", "sql_injection", "dev", "canary")
-    with pytest.raises(ValueError):
-        append_review_action("v0.1", "case-1", "ignore", "tester", "", tmp_path)
-    with pytest.raises(ValueError):
-        append_review_action("v0.1", "..", "accept", "tester", "", tmp_path)
 
 
 def _write_case(

@@ -90,9 +90,12 @@ def test_execute_evaluation_runs_checks_bars_and_persists_results(tmp_path):
         assert execution.case_count == 1
         summary = json.loads(saved["summary"])
         assert summary["thresholds_passed"] is True
-        assert summary["judge_clarity"]["calibration"] == "uncalibrated"
-        assert summary["judge_calibration"]["sample_count"] == 0
-        assert json.loads(saved_case["metrics"])["judge_accuracy"]["calibration"] == "uncalibrated"
+        assert summary["judge_clarity"] == {"value": 0.8, "validation": "not_validated"}
+        assert summary["judge_metric_validation"] == "not_validated"
+        assert json.loads(saved_case["metrics"])["judge_accuracy"] == {
+            "value": 0.6,
+            "validation": "not_validated",
+        }
     finally:
         connection.close()
 

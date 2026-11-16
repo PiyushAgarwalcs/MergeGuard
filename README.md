@@ -60,7 +60,7 @@ The first saved baseline contains a full replay evaluation snapshot. The pipelin
 |---|---|---|---:|---:|---:|---|---:|---:|
 | v0.1 | stub | test (144 cases) | 50.8% | 0.04 (1 finding / 23 hard-negative and presumed-clean cases) | 0% (0/39 must-catch cases) | not yet measured | 0.0805 s | $0.00 |
 
-This offline run sent no cases to an LLM. All 144 pipeline decisions were `needs_human` because CI was unavailable; the over-escalation rate was 100%. These figures describe deterministic scanner and fail-closed behavior, not live model quality. Judge calibration is also uncalibrated because no human-scored calibration set has been entered.
+This offline run sent no cases to an LLM. All 144 pipeline decisions were `needs_human` because CI was unavailable; the over-escalation rate was 100%. These figures describe deterministic scanner and fail-closed behavior, not live model quality. The separately saved local Ollama consistency run covered eight evenly spaced test cases at five repeats each: decision agreement 1.00, finding Jaccard 0.925, and no flaky cases. See `evals/results/report.html` for the generated report. Judge-derived evaluation scores remain marked `not_validated` and are not used as acceptance gates.
 
 ## Evaluation and dashboard
 
@@ -74,7 +74,7 @@ python -m evals.run --layer pipeline --split test --mode replay
 python -m evals.run gate
 ```
 
-Use the `dev` split for tuning and the `test` split for reports. Save an intentional baseline update with `python -m evals.run baseline save`. Dashboard pages show evaluation layers, pipeline slices, case details, run comparisons, consistency, ablations, cost and latency, dataset coverage, judge calibration, and live review traces. See [evaluation instructions](docs/evaluation.md) for every layer and dashboard page.
+Use the `dev` split for tuning and the `test` split for reports. Save an intentional baseline update with `python -m evals.run baseline save`. Dashboard pages show evaluation layers, pipeline slices, case details, run comparisons, consistency, ablations, cost and latency, dataset coverage, and live review traces. See [evaluation instructions](docs/evaluation.md) for every layer and dashboard page.
 
 In the measured stub ablation, `single_agent` matched the full team on recall (0.451), precision (0.687), and unsafe-pass rate (0). Removing rules reduced recall by 0.389. Scripted reviewers return empty findings in this experiment, so the deterministic scanner drives the result; these values do not show that a live single-agent system matches the team.
 

@@ -23,5 +23,4 @@ provenance:
   - line_in_diff
   - quote_on_line
   - static_tool_agrees
-  human_reviewed: false
   cross_check: skipped_no_model

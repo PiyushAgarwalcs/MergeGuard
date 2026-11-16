@@ -21,5 +21,4 @@ provenance:
   generated_by: verifier_attack
   validators_passed:
   - known_rejection
-  human_reviewed: false
   cross_check: skipped_no_model

@@ -28,8 +28,7 @@ PAGE_FILES = (
     REPOSITORY_ROOT / "dashboard" / "pages" / "7_Ablations.py",
     REPOSITORY_ROOT / "dashboard" / "pages" / "8_Cost_Latency.py",
     REPOSITORY_ROOT / "dashboard" / "pages" / "9_Dataset.py",
-    REPOSITORY_ROOT / "dashboard" / "pages" / "10_Judge_Calibration.py",
-    REPOSITORY_ROOT / "dashboard" / "pages" / "11_Live_Runs.py",
+    REPOSITORY_ROOT / "dashboard" / "pages" / "10_Live_Runs.py",
 )
 
 
@@ -53,7 +52,7 @@ def test_all_dashboard_pages_run_on_empty_database(tmp_path, monkeypatch):
         assert not app.exception, f"{page.name}: {app.exception}"
 
 
-def test_comparison_consistency_and_calibration_pages_show_saved_details(tmp_path, monkeypatch):
+def test_comparison_and_consistency_pages_show_saved_details(tmp_path, monkeypatch):
     sample_path = build_sample_db(tmp_path / "detailed.db")
     connection = connect(sample_path)
     try:
@@ -126,7 +125,7 @@ def test_comparison_consistency_and_calibration_pages_show_saved_details(tmp_pat
     finally:
         connection.close()
     monkeypatch.setenv("DATABASE_PATH", str(sample_path))
-    for filename in ("5_Compare_Runs.py", "6_Consistency.py", "10_Judge_Calibration.py"):
+    for filename in ("5_Compare_Runs.py", "6_Consistency.py"):
         page = REPOSITORY_ROOT / "dashboard" / "pages" / filename
         app = AppTest.from_file(str(page), default_timeout=30).run()
         if filename == "5_Compare_Runs.py" and not app.exception:
@@ -171,7 +170,7 @@ def test_live_runs_page_shows_operational_details(tmp_path, monkeypatch):
     finally:
         connection.close()
     monkeypatch.setenv("DATABASE_PATH", str(sample_path))
-    page = REPOSITORY_ROOT / "dashboard" / "pages" / "11_Live_Runs.py"
+    page = REPOSITORY_ROOT / "dashboard" / "pages" / "10_Live_Runs.py"
     app = AppTest.from_file(str(page), default_timeout=30).run()
     assert not app.exception, app.exception
     assert any("owner/repo" in str(frame.value) for frame in app.dataframe)

@@ -20,7 +20,6 @@ provenance:
   validators_passed:
   - quote_on_line
   - metamorphic_label_preserved
-  human_reviewed: false
   cross_check: skipped_no_model
 injection:
   placement: pr_body
