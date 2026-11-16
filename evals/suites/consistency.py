@@ -31,7 +31,9 @@ def run(config: EvalConfig) -> SuiteResult:
     if not cases:
         raise ValueError(f"No consistency cases are available in the {split!r} split.")
     repeat_count = max(MINIMUM_REPEATS, config.repeats)
-    use_stub = not (settings.LLM_API_KEY and settings.LLM_BASE_URL)
+    use_stub = not settings.LLM_BASE_URL or (
+        settings.LLM_PROVIDER != "ollama" and not settings.LLM_API_KEY
+    )
     observations: dict[str, list[dict[str, Any]]] = {}
     case_results: list[SuiteCaseResult] = []
     for record, diff in cases:

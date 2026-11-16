@@ -193,19 +193,16 @@ def _review(
     )
     previous_mode = settings.LLM_MODE
     settings.LLM_MODE = "record" if use_stub or mode == "live" else "replay"
+    graph_config = {"configurable": {"thread_id": f"pipeline-{record['id']}"}}
+    initial_state = {
+        "pr": pr,
+        "repo_path": str(_repo_root(files)),
+        "run_id": f"pipeline-{record['id']}",
+        "ci_status": "missing",
+        "incomplete": False,
+    }
     try:
-        result = asyncio.run(
-            graph.ainvoke(
-                {
-                    "pr": pr,
-                    "repo_path": str(_repo_root(files)),
-                    "run_id": f"pipeline-{record['id']}",
-                    "ci_status": "missing",
-                    "incomplete": False,
-                },
-                config={"configurable": {"thread_id": f"pipeline-{record['id']}"}},
-            )
-        )
+        result = asyncio.run(_invoke_review(graph, initial_state, graph_config))
     finally:
         settings.LLM_MODE = previous_mode
     return {
@@ -213,6 +210,17 @@ def _review(
         "findings": result.get("decision_findings", []),
         "complete": result["decision"].complete,
     }
+
+
+async def _invoke_review(
+    graph: Any, state: dict[str, Any], config: dict[str, Any]
+) -> dict[str, Any]:
+    """Read the checkpointed state when the graph pauses at the human gate."""
+    result = await graph.ainvoke(state, config=config)
+    if "decision" in result:
+        return result
+    snapshot = await graph.aget_state(config)
+    return dict(snapshot.values) if snapshot.values else result
 
 
 def _confusion(observations: list[dict[str, Any]]) -> dict[str, dict[str, int]]:
