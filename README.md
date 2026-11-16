@@ -51,79 +51,47 @@ Rather than letting an LLM unilaterally approve or block code, MergeGuard introd
 Each agent and pipeline stage is color-coded by responsibility:
 
 ```mermaid
-flowchart TD
-    %% Styling classes
-    classDef preproc fill:#f1f5f9,stroke:#475569,stroke-width:2px,color:#0f172a;
+flowchart LR
+    %% Styling Classes
+    classDef preproc fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#0f172a;
     classDef security fill:#fee2e2,stroke:#ef4444,stroke-width:2px,color:#991b1b;
     classDef correctness fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#075985;
     classDef testrev fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#92400e;
     classDef skeptic fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px,color:#5b21b6;
     classDef verifier fill:#dcfce7,stroke:#10b981,stroke-width:2px,color:#065f46;
-    classDef judge fill:#fef9c3,stroke:#eab308,stroke-width:3px,color:#713f12;
+    classDef judge fill:#fef9c3,stroke:#ca8a04,stroke-width:2px,color:#713f12;
     classDef passDecision fill:#bbf7d0,stroke:#16a34a,stroke-width:2px,color:#14532d;
+    classDef humanDecision fill:#fed7aa,stroke:#ea580c,stroke-width:2px,color:#7c2d12;
     classDef blockDecision fill:#fecaca,stroke:#dc2626,stroke-width:2px,color:#7f1d1d;
-    classDef humanDecision fill:#ffedd5,stroke:#ea580c,stroke-width:2px,color:#7c2d12;
-    classDef persistence fill:#e2e8f0,stroke:#334155,stroke-width:1.5px,stroke-dasharray: 4 4,color:#1e293b;
+    classDef storage fill:#e2e8f0,stroke:#475569,stroke-width:1.5px,stroke-dasharray: 3 3,color:#1e293b;
 
-    %% Ingestion & Pre-flight
-    subgraph INGESTION ["📥 Deterministic Ingestion"]
-        PR["PR Metadata & Unified Diff"]:::preproc
-        PARSE["Diff Parser & AST Context Collector"]:::preproc
-        REDACT["Secret Redactor (Pattern Scanning)"]:::preproc
-        RULE_SCAN["Deterministic Rule Engine (12 Security Categories)"]:::preproc
-    end
+    %% Ingestion
+    PR["📄 PR Diff & CI"]:::preproc --> SCAN["⚙️ Parse, Redact &<br/>Rule Scanner"]:::preproc
 
-    PR --> PARSE --> REDACT --> RULE_SCAN
+    %% Agent Fan-Out
+    SCAN --> SEC["🔴 Security Agent<br/><i>Injections · Auth · CVEs</i>"]:::security
+    SCAN --> CORR["🔵 Correctness Agent<br/><i>Logic Bugs · AST Checks</i>"]:::correctness
+    SCAN --> TEST["🟡 Test Agent<br/><i>Coverage · Sentinels</i>"]:::testrev
 
-    %% LangGraph Agents
-    subgraph AGENTS ["🤖 LangGraph Multi-Agent Review Team"]
-        direction TB
-        subgraph PARALLEL_REVIEW ["Parallel Reviewers"]
-            SEC["🔴 Security Reviewer\n(OWASP, Injections, Auth)"]:::security
-            CORR["🔵 Correctness Reviewer\n(Logic Bugs, AST Checks)"]:::correctness
-            TEST["🟡 Test Reviewer\n(Coverage Gaps, Test Health)"]:::testrev
-        end
-        SKEPTIC["🟣 Adversarial Skeptic\n(Challenges Findings & Forces Hunk Citation)"]:::skeptic
-    end
-
-    REDACT --> SEC
-    REDACT --> CORR
-    REDACT --> TEST
-
-    SEC --> SKEPTIC
+    %% Skeptic & Verification
+    SEC --> SKEPTIC["🟣 Adversarial Skeptic<br/><i>Challenges Findings</i>"]:::skeptic
     CORR --> SKEPTIC
     TEST --> SKEPTIC
 
-    %% Verification & Safety
-    subgraph VERIFICATION ["🛡️ Grounded Verification"]
-        VERIFY["Mechanical Evidence Verifier\n(Validates File, Line Range & Hunk Quotes)"]:::verifier
-    end
+    SKEPTIC --> VERIFY["🟢 Evidence Verifier<br/><i>Line & Quote Checks</i>"]:::verifier
+    SCAN -. Rule Findings .-> VERIFY
 
-    RULE_SCAN --> VERIFY
-    SKEPTIC --> VERIFY
+    %% Judge & Decisions
+    VERIFY --> JUDGE{"⚖️ Deterministic<br/>Judge"}:::judge
 
-    %% Pure Logic Judge
-    subgraph ARBITRATION ["⚖️ Decision & Output"]
-        JUDGE{"Deterministic Judge\n(Pure Rule-Based Order)"}:::judge
-        
-        PASS["✅ PASS\n(Zero Blocking Risk & Passing CI)"]:::passDecision
-        HUMAN["⚠️ NEEDS HUMAN\n(High Risk, Missing CI, or Model Timeout)"]:::humanDecision
-        BLOCK["🛑 BLOCK\n(Verified Critical Vulnerability)"]:::blockDecision
-    end
+    JUDGE --> PASS["✅ PASS"]:::passDecision
+    JUDGE --> HUMAN["⚠️ NEEDS HUMAN"]:::humanDecision
+    JUDGE --> BLOCK["🛑 BLOCK"]:::blockDecision
 
-    VERIFY --> JUDGE
-    JUDGE --> PASS
-    JUDGE --> HUMAN
-    JUDGE --> BLOCK
-
-    %% Storage & UI
-    subgraph OPS ["📊 Persistence & Observability"]
-        SQLITE[("SQLite WAL Store\nRuns · Findings · Checkpoints")]:::persistence
-        STREAMLIT["Streamlit Dashboard & HTML Reports"]:::persistence
-    end
-
-    JUDGE -.-> SQLITE
-    SQLITE -.-> STREAMLIT
+    %% Persistence
+    HUMAN -. Checkpoint .-> STORE[("💾 SQLite Trace<br/>& Dashboard")]:::storage
+    PASS -.-> STORE
+    BLOCK -.-> STORE
 ```
 
 ---
