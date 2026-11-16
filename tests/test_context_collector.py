@@ -1,3 +1,5 @@
+# Tests bounded repository context collection and caller/test discovery.
+
 from __future__ import annotations
 
 from pathlib import Path

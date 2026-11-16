@@ -1,3 +1,5 @@
+# Credential-gated read-only checks against an explicitly configured test repository.
+
 from __future__ import annotations
 
 import pytest

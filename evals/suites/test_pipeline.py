@@ -1,3 +1,5 @@
+# Tests for full-pipeline evaluation metrics, slices, and persisted outcomes.
+
 from evals.config import EvalConfig
 from evals.suites.pipeline import run
 from mergeguard.settings import settings

@@ -1,3 +1,5 @@
+# Tests run persistence, structured tracing, privacy handling, and concurrent writes.
+
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor

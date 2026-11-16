@@ -1,3 +1,5 @@
+# Tests for paired graph ablation execution and persisted case metrics.
+
 from evals.config import EvalConfig
 from evals.suites import ablations
 from mergeguard.settings import settings

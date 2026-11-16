@@ -1,3 +1,5 @@
+# Tests for correctness, test-reviewer, skeptic, and reporter evaluation contracts.
+
 from evals.config import EvalConfig
 from evals.suites.agents_other import run
 

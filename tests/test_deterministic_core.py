@@ -1,3 +1,5 @@
+# Tests deterministic parsing, scanning, verification, scoring, and CLI behavior.
+
 from __future__ import annotations
 
 from pathlib import Path

@@ -5,7 +5,12 @@ from datetime import UTC, datetime, timedelta
 import pandas as pd
 import streamlit as st
 
-from dashboard.queries import list_review_runs, live_alerts, review_drift, review_run_detail
+from dashboard.live_queries import (
+    list_review_runs,
+    live_alerts,
+    review_drift,
+    review_run_detail,
+)
 
 st.title("Live runs")
 alerts = live_alerts((datetime.now(UTC) - timedelta(hours=1)).isoformat())

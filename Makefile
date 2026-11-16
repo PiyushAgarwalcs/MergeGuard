@@ -17,7 +17,8 @@ fmt:
 	ruff check --fix .
 
 eval-fast:
-	python -m evals.run --tier fast
+	python -m evals.run --layer components --mode replay
+	python -m evals.run --layer integration --mode replay
 
 serve:
 	python -m uvicorn mergeguard.api:app --reload

@@ -1,3 +1,5 @@
+# Checks security prompts delimit attacker-controlled pull request data.
+
 from mergeguard.llm import load_prompt
 
 
