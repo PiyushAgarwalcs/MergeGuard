@@ -30,6 +30,24 @@ The default `LLM_MODE` is `replay`; no API key is needed for local setup. If no 
 
 The dashboard reads `data/mergeguard.db` by default. Set `DATABASE_PATH` to use another SQLite file. It can start with an empty database; the evaluation pages populate as saved runs are added.
 
+### Use local Ollama
+
+The Ollama provider uses the OpenAI-compatible endpoint and needs no API key. For the installed `qwen3:1.7b` model, set these values in `.env`:
+
+```dotenv
+LLM_PROVIDER=ollama
+LLM_BASE_URL=http://localhost:11434/v1
+LLM_API_KEY=
+LLM_MODE=live
+REVIEWER_MODEL=qwen3:1.7b
+SKEPTIC_MODEL=qwen3:1.7b
+JUDGE_MODEL=qwen3:1.7b
+GENERATOR_MODEL=qwen3:1.7b
+CROSS_CHECK_MODEL=
+```
+
+Leave `CROSS_CHECK_MODEL` blank to use the skeptic model for that optional role. MergeGuard sends constrained JSON schemas to Ollama, wrapping list schemas for its object-root JSON schema interface and validating the returned items with Pydantic.
+
 ## Results
 
 The first saved baseline contains a full replay evaluation snapshot. The pipeline row below comes from the recorded `v0.1` test split, 144 cases, in **stub** mode without live model calls. Values are from the persisted SQLite evaluation run; the baseline snapshot is in `evals/baselines/main.json`.

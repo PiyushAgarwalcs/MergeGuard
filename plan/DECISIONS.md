@@ -28,3 +28,4 @@ Pre-made defaults. Add new decisions at the bottom (date, decision, reason). Do 
 ## Log
 
 2026-11-16 P9.4: Moved Streamlit, pandas, and Plotly into base dependencies so the README quick start's `pip install -e .` includes the dashboard runtime; they remain dashboard runtime dependencies even though originally grouped in the `eval` extra.
+2026-11-16 P9.7: Added an explicit Ollama provider path with flattened Pydantic schemas and wrapped list output. Verified the installed `qwen3:1.7b` model against finding and skeptic schemas through the local OpenAI-compatible endpoint; kept the default generic provider and scripted stubs unchanged.

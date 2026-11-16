@@ -1,6 +1,9 @@
 # Tests the LLM client with scripted replies and isolated cache/database paths.
 # No test sends an HTTP request or needs model credentials.
 
+import json
+from types import SimpleNamespace
+
 import pytest
 from pydantic import BaseModel
 
@@ -16,6 +19,7 @@ from mergeguard.llm import (
 from mergeguard.llm_cache import cache_key
 from mergeguard.llm_fake import ScriptedLLM
 from mergeguard.llm_json import InvalidModelOutput, parse_json_reply
+from mergeguard.models import Finding
 from mergeguard.settings import settings
 from mergeguard.storage import get_events
 
@@ -172,6 +176,61 @@ def test_live_mode_without_credentials_fails_clearly(monkeypatch, tmp_path, isol
     monkeypatch.setattr(settings, "LLM_BASE_URL", "")
     with pytest.raises(MissingCredentials):
         ask_for_object("prompt", SampleObject, "security_reviewer", cache_dir=tmp_path)
+
+
+def test_ollama_mode_uses_flattened_structured_schema_without_api_key(
+    monkeypatch, tmp_path, isolated_trace_db
+):
+    """Send Ollama a wrapped list schema, flatten Pydantic refs, and validate its reply."""
+    import openai
+
+    monkeypatch.setattr(settings, "LLM_PROVIDER", "ollama")
+    monkeypatch.setattr(settings, "LLM_MODE", "live")
+    monkeypatch.setattr(settings, "LLM_BASE_URL", "http://localhost:11434/v1")
+    monkeypatch.setattr(settings, "LLM_API_KEY", "")
+    returned_finding = {
+        "id": "F-1",
+        "source": "security_reviewer",
+        "category": "command_injection",
+        "severity": "high",
+        "file": "app.py",
+        "line_start": 2,
+        "line_end": 2,
+        "quote": "subprocess.run(cmd, shell=True)",
+        "explanation": "The shell interprets untrusted input.",
+        "suggestion": "Pass arguments as a list and disable the shell.",
+        "evidence": [],
+    }
+    capture = {}
+
+    class FakeOpenAI:
+        def __init__(self, **kwargs):
+            capture["client"] = kwargs
+            self.chat = SimpleNamespace(completions=SimpleNamespace(create=self.create))
+
+        def create(self, **kwargs):
+            capture["request"] = kwargs
+            content = json.dumps({"items": [returned_finding]})
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=SimpleNamespace(content=content))],
+                usage=SimpleNamespace(prompt_tokens=10, completion_tokens=12),
+            )
+
+    monkeypatch.setattr(openai, "OpenAI", FakeOpenAI)
+    result = ask_for_list(
+        "Return one finding.",
+        Finding,
+        "security_reviewer",
+        run_id="ollama-schema",
+        cache_dir=tmp_path / "cache",
+    )
+
+    assert result == [Finding.model_validate(returned_finding)]
+    assert capture["client"]["api_key"] == "ollama"
+    assert capture["client"]["base_url"] == "http://localhost:11434/v1"
+    response_schema = capture["request"]["response_format"]["json_schema"]["schema"]
+    assert "$defs" not in json.dumps(response_schema)
+    assert response_schema["properties"]["items"]["items"]["properties"]["source"]["enum"]
 
 
 def test_cache_key_changes_with_model_prompt_and_parameters():

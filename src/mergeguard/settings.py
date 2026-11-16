@@ -29,6 +29,7 @@ RISK_DEPENDENCY_FILE = 5
 class Settings(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
+    LLM_PROVIDER: Literal["openai_compatible", "ollama"] = "openai_compatible"
     LLM_BASE_URL: str = ""
     LLM_API_KEY: str = ""
     REVIEWER_MODEL: str = "gpt-4o-mini"

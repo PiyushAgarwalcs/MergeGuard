@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import time
 from pathlib import Path
 from typing import Any, TypeVar, cast
@@ -100,6 +101,8 @@ def _ask(
         "response_schema": model_schema.model_json_schema(),
         "temperature": DEFAULT_TEMPERATURE,
     }
+    if settings.LLM_PROVIDER == "ollama":
+        parameters["provider"] = "ollama"
     current_prompt = prompt
     for attempt in range(MAX_VALIDATION_ATTEMPTS):
         try:
@@ -152,7 +155,7 @@ def _request(
                     prompt, model, settings.AGENT_TIMEOUT_SECONDS
                 )
             else:
-                output, tokens_in, tokens_out = _call_openai_compatible(prompt, model)
+                output, tokens_in, tokens_out = _call_openai_compatible(prompt, model, parameters)
         except Exception as error:
             tracing.record(run_id, agent, "llm_error", {"error": str(error)})
             raise
@@ -179,28 +182,99 @@ def _request(
     return response.output
 
 
-def _call_openai_compatible(prompt: str, model: str) -> tuple[str, int, int]:
-    """Call Chat Completions through the configured OpenAI-compatible endpoint."""
-    if not settings.LLM_API_KEY or not settings.LLM_BASE_URL:
-        raise MissingCredentials("LLM_API_KEY and LLM_BASE_URL are required for live mode.")
+def _call_openai_compatible(
+    prompt: str, model: str, parameters: dict[str, object]
+) -> tuple[str, int, int]:
+    """Call the configured provider, applying Ollama JSON schemas when selected."""
+    if not settings.LLM_BASE_URL:
+        raise MissingCredentials("LLM_BASE_URL is required for live mode.")
+    if settings.LLM_PROVIDER != "ollama" and not settings.LLM_API_KEY:
+        raise MissingCredentials("LLM_API_KEY is required for this provider in live mode.")
     from openai import OpenAI
 
     api = OpenAI(
-        api_key=settings.LLM_API_KEY,
+        api_key=settings.LLM_API_KEY or "ollama",
         base_url=settings.LLM_BASE_URL,
         timeout=settings.AGENT_TIMEOUT_SECONDS,
     )
-    response = api.chat.completions.create(
-        model=model,
-        temperature=DEFAULT_TEMPERATURE,
-        messages=[
+    request: dict[str, Any] = {
+        "model": model,
+        "temperature": DEFAULT_TEMPERATURE,
+        "messages": [
             {"role": "system", "content": "Return only valid JSON matching the requested schema."},
             {"role": "user", "content": prompt},
         ],
-    )
+    }
+    if settings.LLM_PROVIDER == "ollama":
+        schema = parameters.get("response_schema")
+        if not isinstance(schema, dict):
+            raise TypeError("Ollama structured output requires a JSON schema.")
+        response_kind = parameters.get("response_kind")
+        flat_schema = _flatten_json_schema(schema)
+        if response_kind == "list":
+            flat_schema = {
+                "type": "object",
+                "properties": {"items": {"type": "array", "items": flat_schema}},
+                "required": ["items"],
+                "additionalProperties": False,
+            }
+        request["response_format"] = {
+            "type": "json_schema",
+            "json_schema": {
+                "name": _schema_name(str(parameters.get("agent", "mergeguard"))),
+                "strict": True,
+                "schema": flat_schema,
+            },
+        }
+    response = api.chat.completions.create(**request)
     output = response.choices[0].message.content or ""
+    if settings.LLM_PROVIDER == "ollama" and parameters.get("response_kind") == "list":
+        wrapper = json.loads(output)
+        if not isinstance(wrapper, dict) or not isinstance(wrapper.get("items"), list):
+            raise ValueError("Ollama structured response did not contain an items list.")
+        output = json.dumps(wrapper["items"])
     usage = response.usage
     return output, usage.prompt_tokens if usage else 0, usage.completion_tokens if usage else 0
+
+
+def _flatten_json_schema(schema: dict[str, Any]) -> dict[str, Any]:
+    """Inline local Pydantic definitions for Ollama's JSON schema converter."""
+    definitions = schema.get("$defs", {})
+
+    def flatten(value: Any) -> Any:
+        if isinstance(value, dict):
+            reference = value.get("$ref")
+            if reference is not None:
+                prefix = "#/$defs/"
+                if not isinstance(reference, str) or not reference.startswith(prefix):
+                    raise ValueError(f"Unsupported JSON schema reference: {reference!r}")
+                name = reference[len(prefix) :]
+                if not isinstance(definitions, dict) or name not in definitions:
+                    raise ValueError(f"JSON schema definition is missing: {name}")
+                resolved = flatten(definitions[name])
+                resolved.update(
+                    {key: flatten(item) for key, item in value.items() if key != "$ref"}
+                )
+                return resolved
+            return {
+                key: flatten(item) for key, item in value.items() if key not in {"$defs", "title"}
+            }
+        if isinstance(value, list):
+            return [flatten(item) for item in value]
+        return value
+
+    flattened = flatten(schema)
+    if not isinstance(flattened, dict):
+        raise TypeError("A JSON schema must be an object.")
+    return flattened
+
+
+def _schema_name(value: str) -> str:
+    """Convert the agent name to a schema identifier accepted by chat APIs."""
+    normalized = "".join(
+        character if character.isalnum() or character in "_-" else "_" for character in value
+    )
+    return normalized or "mergeguard"
 
 
 def _model_for_agent(agent: str) -> str:

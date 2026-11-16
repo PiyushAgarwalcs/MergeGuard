@@ -8,7 +8,7 @@ The repository includes a versioned seeded dataset, evaluation layers, compariso
 
 ## Latest recorded evaluation
 
-The latest full pipeline run is saved in `data/mergeguard.db` (eval run `a3c55079-941c-4d07-9256-6290e2314bbb`), using dataset `v0.1`, test split, 144 cases, and reviewer mode `stub`. The evaluation is a deterministic offline measurement; it is not live-model quality evidence.
+The latest full pipeline run is saved in `data/mergeguard.db` (eval run `a3c55079-941c-4d07-9256-6290e2314bbb`), using dataset `v0.1`, test split, 144 cases, and reviewer mode `stub`. The evaluation is a deterministic offline measurement; it is not live-model quality evidence. A follow-up added local Ollama support and verified `qwen3:1.7b` against finding-list and skeptic-verdict JSON schemas. The full evaluation has not been rerun with Ollama.
 
 | Metric | Result |
 |---|---:|
@@ -28,7 +28,7 @@ The saved six-variant ablation on 212 development cases reports `single_agent` m
 
 ## Deviations and limitations
 
-- LLM credentials were unavailable. Dataset cross-checks were skipped where permitted; live reviewer, nightly, and live robustness results were not produced. Replay and scripted stubs were used. See `plan/BLOCKERS.md`.
+- No remote LLM credentials were available for the first baseline. Dataset cross-checks were skipped where permitted; replay and scripted stubs were used. Local Ollama is now supported and schema-verified, but no full Ollama evaluation has been run. See `plan/BLOCKERS.md`.
 - GitHub credentials and a test repository were unavailable. Live GitHub verification was skipped; the client and flows were tested with recorded fixtures and fakes.
 - Full five-repeat consistency measurements and the 40-sample judge calibration have not been collected. The calibration status stays explicitly `uncalibrated`.
 - `.env.example` and package metadata were adjusted so the documented `pip install -e .` quick start includes the dashboard and evaluation modules. Dashboard runtime packages are base dependencies.
@@ -37,7 +37,8 @@ The saved six-variant ablation on 212 development cases reports `single_agent` m
 
 ## Open blockers
 
-- Configure an approved OpenAI-compatible provider endpoint and key to run live agent, pipeline, robustness, and nightly evaluations.
+- Approve and run a full local Ollama evaluation before treating its live quality as measured.
+- Configure a remote provider endpoint and key only if remote live agent, pipeline, robustness, or nightly evaluations are desired.
 - Configure a scoped GitHub token and disposable test repository to run the credential-gated live GitHub test.
 - Collect at least 40 complete human/judge pairs, then review calibration agreement and bias before relying on judge-based metrics.
 - Run the full five-repeat consistency suite at production settings and record its saved agreement, Jaccard, flip-rate, and flaky-case outputs.

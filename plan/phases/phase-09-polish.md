@@ -11,6 +11,7 @@ Depends on: Phase 8.
 - [ ] **P9.4** `README.md`: one-line pitch; the flow diagram; a quick start that works in replay mode with no API key (`pip install -e .`, `mergeguard review examples/<flawed>.diff`, `streamlit run dashboard/app.py`); a results table filled only with numbers actually stored in SQLite (dataset version, model, split, recall, false findings per clean PR, unsafe-pass rate, decision agreement, latency, cost), and the text "not yet measured" for anything missing; the ablation outcome; limits and non-goals.
 - [ ] **P9.5** Code-quality pass: any file over about 200 lines is split; remove dead code; `make check` clean; every module has its header comment; `.env.example` matches `settings.py`.
 - [ ] **P9.6** Write `plan/FINAL-REPORT.md`: what was built, the latest evaluation numbers, every deviation from the plan, all open blockers, and suggested next steps.
+- [x] **P9.7** Add an optional local Ollama provider with schema-constrained output, test it against an installed model, and document its environment configuration. Do not run the full evaluation without user approval.
 
 ## Verify
 

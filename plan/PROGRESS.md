@@ -92,6 +92,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P9.4** README with real results
 - [x] **P9.5** Code-quality pass
 - [x] **P9.6** Final report
+- [x] **P9.7** Ollama provider support and schema probe
 
 ## Session notes
 
@@ -172,3 +173,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P9.5 by splitting oversized review, graph, storage, tracing, human-gate, dashboard, and dataset modules; preserving public import/patch points; adding missing module headers; matching `.env.example` keys/defaults to `Settings`; and removing the placeholder `eval-fast` command while fixing its Make target to run components and integration replay suites. Added a settings/environment consistency test. `make check` passed (295 passed, 1 skipped); `make eval-fast` passed both suites. Next: P9.6 final report.
 2026-11-16: P9.5 follow-up: changed the storage/tracing tests to use `tmp_path` instead of deleting the default `data/mergeguard.db`. This preserves operator data when `make check` runs. `make check` passed (295 passed, 1 skipped).
 2026-11-16: Completed P9.6 and wrote `plan/FINAL-REPORT.md` with the built system, latest SQLite pipeline results, measured ablation, deviations, credential blockers, limitations, and next steps. Phase 9 verification passed: `make check` (295 passed, 1 skipped); `pip install -e .` succeeded; the README sample review returned the documented `needs_human` result without replay/model credentials; Streamlit health returned HTTP 200. All planned tasks are checked. The live GitHub test remains skipped because credentials are unavailable.
+2026-11-16: Completed P9.7 with optional Ollama structured-output support. Verified local Ollama 0.40.5 and installed `qwen3:1.7b` against Finding-list and SkepticVerdict schemas, including one live MergeGuard-client Finding validation. `make check` passed (296 passed, 1 skipped). The original OpenAI-compatible and scripted stub paths remain available, and the committed evaluation baseline is unchanged. No evaluation suite was run; awaiting approval before the full Ollama evaluation.
