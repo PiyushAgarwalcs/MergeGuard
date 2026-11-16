@@ -89,7 +89,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P9.1** Live runs page
 - [x] **P9.2** Monitoring helpers
 - [x] **P9.3** Documentation
-- [ ] **P9.4** README with real results
+- [x] **P9.4** README with real results
 - [ ] **P9.5** Code-quality pass
 - [ ] **P9.6** Final report
 
@@ -168,3 +168,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: Completed P9.1 with the live-runs page showing review decisions, findings, event trace, human feedback, last-hour operational alerts, and pipeline metric drift over 14 days versus the saved baseline. Added cached read-only queries and populated/empty database AppTest coverage. `make check` passed on Python 3.11 (292 passed, 1 skipped). Next: P9.2 monitoring helpers.
 2026-11-16: Completed P9.2 with `mergeguard shadow-report`, a persisted summary of shadow-mode runs, dismissal rates by finding category, and approvals/overrides after blocked runs. Tests cover summary content and CLI JSON output. `make check` passed on Python 3.11 (294 passed, 1 skipped). Next: P9.3 documentation.
 2026-11-16: Completed P9.3 with a one-page architecture and flow diagram, evaluation run instructions and dashboard guide, measured stub ablation context, and updated threat-model monitoring and feedback limits. `make check` passed on Python 3.11 (294 passed, 1 skipped). Next: P9.4 README results and replay quick start.
+2026-11-16: Completed P9.4 with the replay-mode install/review/dashboard quick start, architecture diagram, measured `v0.1` test results from the saved SQLite baseline, ablation context, and limits/non-goals. Moved dashboard runtime packages into base dependencies and included `evals`/`dashboard` packages in installation after the quick-start smoke test exposed missing `evals.report`. `pip install -e .` succeeded; local review returned the expected needs-human result without a replay cache; Streamlit health returned HTTP 200. `make check` passed on Python 3.11 (294 passed, 1 skipped). Next: P9.5 code-quality pass.

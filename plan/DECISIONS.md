@@ -26,3 +26,5 @@ Pre-made defaults. Add new decisions at the bottom (date, decision, reason). Do 
 | 20 | Out of scope | Deploy, auto-merge, multiple languages, user accounts, vector database, Redis |
 
 ## Log
+
+2026-11-16 P9.4: Moved Streamlit, pandas, and Plotly into base dependencies so the README quick start's `pip install -e .` includes the dashboard runtime; they remain dashboard runtime dependencies even though originally grouped in the `eval` extra.

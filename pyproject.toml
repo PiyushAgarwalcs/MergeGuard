@@ -20,13 +20,13 @@ dependencies = [
     "typer",
     "rich",
     "python-dotenv",
+    "streamlit",
+    "pandas",
+    "plotly",
 ]
 
 [project.optional-dependencies]
 eval = [
-    "streamlit",
-    "pandas",
-    "plotly",
     "numpy",
     "bandit",
 ]
@@ -38,9 +38,6 @@ dev = [
     "black>=24.0",
     "mypy>=1.10",
     "types-PyYAML>=6.0.12",
-    "streamlit",
-    "pandas",
-    "plotly",
     "numpy",
     "bandit",
 ]
@@ -49,10 +46,11 @@ dev = [
 mergeguard = "mergeguard.cli:app"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = {"" = "src", "evals" = "evals", "dashboard" = "dashboard"}
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["src", "."]
+include = ["mergeguard*", "evals*", "dashboard*"]
 
 [tool.ruff]
 line-length = 100
