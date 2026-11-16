@@ -38,3 +38,11 @@ def test_consistency_uses_ollama_without_an_api_key(monkeypatch) -> None:
     assert stub_values == [False] * 5
     assert result.metrics["mode"] == "live"
     assert "live_skipped_no_credentials" not in result.metrics
+
+
+def test_consistency_quick_sample_spans_the_split() -> None:
+    items = list(range(144))
+
+    assert consistency._evenly_spaced_sample(items, 4) == [0, 48, 95, 143]
+    assert consistency._evenly_spaced_sample(items, 1) == [72]
+    assert consistency._evenly_spaced_sample(items, 144) == items

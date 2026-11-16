@@ -26,8 +26,9 @@ def run(config: EvalConfig) -> SuiteResult:
         for record, diff in load_cases(config.dataset_version, split)
         if "findings" in record
     ]
+    was_sampled = config.cases is not None and config.cases < len(cases)
     if config.cases is not None:
-        cases = cases[: config.cases]
+        cases = _evenly_spaced_sample(cases, config.cases)
     if not cases:
         raise ValueError(f"No consistency cases are available in the {split!r} split.")
     repeat_count = max(MINIMUM_REPEATS, config.repeats)
@@ -80,6 +81,7 @@ def run(config: EvalConfig) -> SuiteResult:
         "flaky_case_ids": flaky,
         "case_count": len(observations),
         "repeats_per_case": repeat_count,
+        "sampling": "evenly_spaced" if was_sampled else "full_split",
     }
     if config.mode == "live" and use_stub:
         metrics["live_skipped_no_credentials"] = 1.0
@@ -91,6 +93,17 @@ def run(config: EvalConfig) -> SuiteResult:
         cases=tuple(case_results),
         model_config={"mode": metrics["mode"], "split": split},
     )
+
+
+def _evenly_spaced_sample(items: list[Any], count: int) -> list[Any]:
+    """Select a deterministic spread across the ordered split for quick runs."""
+    if count >= len(items):
+        return items
+    if count == 1:
+        return [items[len(items) // 2]]
+    last = len(items) - 1
+    indexes = [round(index * last / (count - 1)) for index in range(count)]
+    return [items[index] for index in indexes]
 
 
 def _finding_keys(findings: list[Any]) -> list[tuple[str, str, int, int]]:
