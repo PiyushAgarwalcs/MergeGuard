@@ -233,6 +233,46 @@ def test_ollama_mode_uses_flattened_structured_schema_without_api_key(
     assert response_schema["properties"]["items"]["items"]["properties"]["source"]["enum"]
 
 
+def test_groq_mode_sends_strict_schema_through_openai_compatible_api(
+    monkeypatch, tmp_path, isolated_trace_db
+):
+    """Send Groq a strict schema with every object property required."""
+    import openai
+
+    monkeypatch.setattr(settings, "LLM_PROVIDER", "groq")
+    monkeypatch.setattr(settings, "LLM_MODE", "live")
+    monkeypatch.setattr(settings, "LLM_BASE_URL", "https://api.groq.com/openai/v1")
+    monkeypatch.setattr(settings, "LLM_API_KEY", "test-key")
+    capture = {}
+
+    class FakeOpenAI:
+        def __init__(self, **kwargs):
+            capture["client"] = kwargs
+            self.chat = SimpleNamespace(completions=SimpleNamespace(create=self.create))
+
+        def create(self, **kwargs):
+            capture["request"] = kwargs
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=SimpleNamespace(content='{"value":5}'))],
+                usage=SimpleNamespace(prompt_tokens=10, completion_tokens=2),
+            )
+
+    monkeypatch.setattr(openai, "OpenAI", FakeOpenAI)
+    result = ask_for_object(
+        "Return a value.",
+        SampleObject,
+        "security_reviewer",
+        run_id="groq-schema",
+        cache_dir=tmp_path / "cache",
+    )
+
+    assert result == SampleObject(value=5)
+    assert capture["request"]["response_format"]["type"] == "json_schema"
+    schema = capture["request"]["response_format"]["json_schema"]["schema"]
+    assert schema["required"] == ["value"]
+    assert schema["additionalProperties"] is False
+
+
 def test_cache_key_changes_with_model_prompt_and_parameters():
     """Separate cached requests when any request-defining input changes."""
     key = cache_key("model-a", "prompt", {"temperature": 0})

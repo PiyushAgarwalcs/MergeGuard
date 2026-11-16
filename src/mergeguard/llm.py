@@ -101,8 +101,8 @@ def _ask(
         "response_schema": model_schema.model_json_schema(),
         "temperature": DEFAULT_TEMPERATURE,
     }
-    if settings.LLM_PROVIDER == "ollama":
-        parameters["provider"] = "ollama"
+    if settings.LLM_PROVIDER in {"ollama", "groq"}:
+        parameters["provider"] = settings.LLM_PROVIDER
     current_prompt = prompt
     for attempt in range(MAX_VALIDATION_ATTEMPTS):
         try:
@@ -185,7 +185,7 @@ def _request(
 def _call_openai_compatible(
     prompt: str, model: str, parameters: dict[str, object]
 ) -> tuple[str, int, int]:
-    """Call the configured provider, applying Ollama JSON schemas when selected."""
+    """Call the configured provider, applying constrained schemas where supported."""
     if not settings.LLM_BASE_URL:
         raise MissingCredentials("LLM_BASE_URL is required for live mode.")
     if settings.LLM_PROVIDER != "ollama" and not settings.LLM_API_KEY:
@@ -205,12 +205,14 @@ def _call_openai_compatible(
             {"role": "user", "content": prompt},
         ],
     }
-    if settings.LLM_PROVIDER == "ollama":
+    if settings.LLM_PROVIDER in {"ollama", "groq"}:
         schema = parameters.get("response_schema")
         if not isinstance(schema, dict):
-            raise TypeError("Ollama structured output requires a JSON schema.")
+            raise TypeError("Structured output requires a JSON schema.")
         response_kind = parameters.get("response_kind")
         flat_schema = _flatten_json_schema(schema)
+        if settings.LLM_PROVIDER == "groq":
+            flat_schema = _make_strict_json_schema(flat_schema)
         if response_kind == "list":
             flat_schema = {
                 "type": "object",
@@ -228,10 +230,10 @@ def _call_openai_compatible(
         }
     response = api.chat.completions.create(**request)
     output = response.choices[0].message.content or ""
-    if settings.LLM_PROVIDER == "ollama" and parameters.get("response_kind") == "list":
+    if settings.LLM_PROVIDER in {"ollama", "groq"} and parameters.get("response_kind") == "list":
         wrapper = json.loads(output)
         if not isinstance(wrapper, dict) or not isinstance(wrapper.get("items"), list):
-            raise ValueError("Ollama structured response did not contain an items list.")
+            raise ValueError("Structured response did not contain an items list.")
         output = json.dumps(wrapper["items"])
     usage = response.usage
     return output, usage.prompt_tokens if usage else 0, usage.completion_tokens if usage else 0
@@ -275,6 +277,26 @@ def _schema_name(value: str) -> str:
         character if character.isalnum() or character in "_-" else "_" for character in value
     )
     return normalized or "mergeguard"
+
+
+def _make_strict_json_schema(schema: dict[str, Any]) -> dict[str, Any]:
+    """Apply Groq strict-mode object requirements recursively."""
+    if isinstance(schema.get("properties"), dict):
+        properties = schema["properties"]
+        schema["required"] = list(properties)
+        schema["additionalProperties"] = False
+        for value in properties.values():
+            if isinstance(value, dict):
+                _make_strict_json_schema(value)
+    for key in ("items", "anyOf", "oneOf", "allOf"):
+        value = schema.get(key)
+        if isinstance(value, dict):
+            _make_strict_json_schema(value)
+        elif isinstance(value, list):
+            for item in value:
+                if isinstance(item, dict):
+                    _make_strict_json_schema(item)
+    return schema
 
 
 def _model_for_agent(agent: str) -> str:

@@ -28,7 +28,7 @@ The saved six-variant ablation on 212 development cases reports `single_agent` m
 
 ## Deviations and limitations
 
-- No remote LLM credentials were available for the first baseline. Dataset cross-checks were skipped where permitted; replay and scripted stubs were used. Local Ollama is now supported and schema-verified, but no full Ollama evaluation has been run. See `plan/BLOCKERS.md`.
+- No remote LLM calls were used for the first evaluation baseline. Dataset cross-checks were skipped where permitted; replay and scripted stubs were used. Local Ollama and optional Groq structured output are supported and schema-verified, but no full or comparative live evaluation has been run. See `plan/BLOCKERS.md`.
 - GitHub credentials and a test repository were unavailable. Live GitHub verification was skipped; the client and flows were tested with recorded fixtures and fakes.
 - Full five-repeat consistency measurements and the 40-sample judge calibration have not been collected. The calibration status stays explicitly `uncalibrated`.
 - `.env.example` and package metadata were adjusted so the documented `pip install -e .` quick start includes the dashboard and evaluation modules. Dashboard runtime packages are base dependencies.
@@ -37,8 +37,8 @@ The saved six-variant ablation on 212 development cases reports `single_agent` m
 
 ## Open blockers
 
-- Approve and run a full local Ollama evaluation before treating its live quality as measured.
-- Configure a remote provider endpoint and key only if remote live agent, pipeline, robustness, or nightly evaluations are desired.
+- Approve and run a full local Ollama evaluation before treating its live quality as measured; compare Groq only if Ollama performance warrants it.
+- Configure the optional Groq endpoint and key only if remote live agent, pipeline, robustness, or nightly evaluations are desired.
 - Configure a scoped GitHub token and disposable test repository to run the credential-gated live GitHub test.
 - Collect at least 40 complete human/judge pairs, then review calibration agreement and bias before relying on judge-based metrics.
 - Run the full five-repeat consistency suite at production settings and record its saved agreement, Jaccard, flip-rate, and flaky-case outputs.

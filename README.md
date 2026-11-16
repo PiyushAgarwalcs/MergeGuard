@@ -48,6 +48,10 @@ CROSS_CHECK_MODEL=
 
 Leave `CROSS_CHECK_MODEL` blank to use the skeptic model for that optional role. MergeGuard sends constrained JSON schemas to Ollama, wrapping list schemas for its object-root JSON schema interface and validating the returned items with Pydantic.
 
+### Optional Groq fallback
+
+If local Ollama quality or speed is insufficient, Groq can use the same OpenAI-compatible client with strict JSON Schema output. Set `LLM_PROVIDER=groq`, `LLM_BASE_URL=https://api.groq.com/openai/v1`, `LLM_API_KEY` to a Groq API key, and the model roles to a currently supported Groq model such as `openai/gpt-oss-20b`. See [Groq structured outputs](https://console.groq.com/docs/structured-outputs) and [supported models](https://console.groq.com/docs/models).
+
 ## Results
 
 The first saved baseline contains a full replay evaluation snapshot. The pipeline row below comes from the recorded `v0.1` test split, 144 cases, in **stub** mode without live model calls. Values are from the persisted SQLite evaluation run; the baseline snapshot is in `evals/baselines/main.json`.

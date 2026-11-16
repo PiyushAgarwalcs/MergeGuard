@@ -29,3 +29,4 @@ Pre-made defaults. Add new decisions at the bottom (date, decision, reason). Do 
 
 2026-11-16 P9.4: Moved Streamlit, pandas, and Plotly into base dependencies so the README quick start's `pip install -e .` includes the dashboard runtime; they remain dashboard runtime dependencies even though originally grouped in the `eval` extra.
 2026-11-16 P9.7: Added an explicit Ollama provider path with flattened Pydantic schemas and wrapped list output. Verified the installed `qwen3:1.7b` model against finding and skeptic schemas through the local OpenAI-compatible endpoint; kept the default generic provider and scripted stubs unchanged.
+2026-11-16 P9.8: Added Groq as an opt-in hosted fallback through the existing OpenAI-compatible transport. Use strict JSON Schema with a Groq-supported model (`openai/gpt-oss-20b` was probed); leave Ollama as the initial provider until live quality evaluation supports changing that choice.

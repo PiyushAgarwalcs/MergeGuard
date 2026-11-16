@@ -12,6 +12,7 @@ Depends on: Phase 8.
 - [ ] **P9.5** Code-quality pass: any file over about 200 lines is split; remove dead code; `make check` clean; every module has its header comment; `.env.example` matches `settings.py`.
 - [ ] **P9.6** Write `plan/FINAL-REPORT.md`: what was built, the latest evaluation numbers, every deviation from the plan, all open blockers, and suggested next steps.
 - [x] **P9.7** Add an optional local Ollama provider with schema-constrained output, test it against an installed model, and document its environment configuration. Do not run the full evaluation without user approval.
+- [x] **P9.8** Add an optional Groq structured-output fallback and verify its provider schemas; keep the full evaluation approval-gated.
 
 ## Verify
 

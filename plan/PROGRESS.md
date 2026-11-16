@@ -93,6 +93,7 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 - [x] **P9.5** Code-quality pass
 - [x] **P9.6** Final report
 - [x] **P9.7** Ollama provider support and schema probe
+- [x] **P9.8** Optional Groq structured-output fallback
 
 ## Session notes
 
@@ -174,3 +175,4 @@ Tick a task only after `make check` passes. Details for each task are in `phases
 2026-11-16: P9.5 follow-up: changed the storage/tracing tests to use `tmp_path` instead of deleting the default `data/mergeguard.db`. This preserves operator data when `make check` runs. `make check` passed (295 passed, 1 skipped).
 2026-11-16: Completed P9.6 and wrote `plan/FINAL-REPORT.md` with the built system, latest SQLite pipeline results, measured ablation, deviations, credential blockers, limitations, and next steps. Phase 9 verification passed: `make check` (295 passed, 1 skipped); `pip install -e .` succeeded; the README sample review returned the documented `needs_human` result without replay/model credentials; Streamlit health returned HTTP 200. All planned tasks are checked. The live GitHub test remains skipped because credentials are unavailable.
 2026-11-16: Completed P9.7 with optional Ollama structured-output support. Verified local Ollama 0.40.5 and installed `qwen3:1.7b` against Finding-list and SkepticVerdict schemas, including one live MergeGuard-client Finding validation. `make check` passed (296 passed, 1 skipped). The original OpenAI-compatible and scripted stub paths remain available, and the committed evaluation baseline is unchanged. No evaluation suite was run; awaiting approval before the full Ollama evaluation.
+2026-11-16: Completed P9.8 with an optional Groq provider using strict JSON Schema requests and the existing OpenAI-compatible client. Probed Finding-list and SkepticVerdict schemas against `openai/gpt-oss-20b`; both passed. `make check` passed under Python 3.11 (297 passed, 1 skipped). Groq is selectable but Ollama remains the configured initial provider; no comparative or full evaluation was run, and the baseline is unchanged.
