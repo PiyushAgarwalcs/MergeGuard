@@ -1,4 +1,4 @@
-name: CI
+name: 🔒 MergeGuard – PR Safety Gate
 
 on:
   push:
@@ -18,27 +18,27 @@ jobs:
         with:
           python-version: '3.11'
           cache: pip
-      - name: Install dependencies
+      - name: ⚙️ Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e '.[dev]'
-      - name: Run unit and component tests
+      - name: 🧪 Unit & integration tests (make check)
         run: make check
-      - name: L1 components
+      - name: 📊 L1 component evaluation suite (706 cases)
         run: python -m evals.run --layer components --mode replay
-      - name: L3 graph integration
+      - name: 🔗 L3 graph integration evaluation
         run: python -m evals.run --layer integration --mode replay
-      - name: Fake-model L5 robustness
+      - name: 🛡️ L5 robustness suite (prompt injection, odd inputs)
         run: python -m evals.run --layer robustness --mode replay
-      - name: L2 reviewer smoke set
+      - name: 🤖 L2 security reviewer smoke set
         run: python -m evals.run --layer agent_security --split dev --cases 30 --mode replay
-      - name: L2 non-security agent smoke set
+      - name: 🤖 L2 non-security agent smoke set
         run: python -m evals.run --layer agents_other --split dev --cases 30 --mode replay
-      - name: L4 pipeline smoke set
+      - name: 🔄 L4 end-to-end pipeline smoke set
         run: python -m evals.run --layer pipeline --split test --cases 30 --mode replay
-      - name: Regression gate self-test
+      - name: 🚦 Regression gate
         run: python -m evals.run --layer regression --mode replay
-      - name: Compare pull-request tier with baseline
+      - name: 📈 Baseline comparison
         shell: bash
         run: |
           if [ -f evals/baselines/main.json ]; then

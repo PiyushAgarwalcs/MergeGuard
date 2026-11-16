@@ -1,0 +1,60 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  MergeGuard – terminal demo  (reference for real screenshot capture)       ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+─────────────────────────────────────────────
+ 1. Single-PR review
+─────────────────────────────────────────────
+
+$ mergeguard review examples/flawed_shell.diff
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ MergeGuard Review
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Decision : needs_human
+Risk     : high
+Findings : 1
+
+ runner.py:2  [command_injection · HIGH · rule]
+  subprocess.run(user, shell=True) — shell=True with untrusted input
+
+
+─────────────────────────────────────────────
+ 2. List recent review runs
+─────────────────────────────────────────────
+
+$ mergeguard runs list
+
+  ID   CREATED              DECISION       RISK    FINDINGS
+  ──── ──────────────────── ────────────── ─────── ────────
+  42   2024-11-16 15:03:11  needs_human    high    1
+  41   2024-11-16 14:58:04  safe           low     0
+  40   2024-11-16 14:51:33  needs_human    medium  2
+  39   2024-11-16 14:44:19  safe           low     0
+  38   2024-11-16 13:30:07  unsafe         high    3
+
+
+─────────────────────────────────────────────
+ 3. Component evaluation suite (706 cases, replay mode)
+─────────────────────────────────────────────
+
+$ python -m evals.run --layer components --mode replay
+
+Running layer=components  mode=replay  cases=706
+[████████████████████████████████████████] 706/706  00:12
+
+Layer: components
+─────────────────────────────────────────────────────────────────────────────
+  Metric                              Value    Threshold  Status
+  ─────────────────────────────────── ──────── ────────── ──────
+  diff_parser_line_accuracy           1.0000   ≥ 0.95     ✓ PASS
+  secret_scanner_recall               1.0000   ≥ 0.90     ✓ PASS
+  secret_scanner_false_positive_rate  0.0000   ≤ 0.05     ✓ PASS
+  redactor_removal_rate               1.0000   ≥ 0.99     ✓ PASS
+  verifier_fabricated_acceptance_rate 0.0000   ≤ 0.05     ✓ PASS
+  verifier_genuine_rejection_rate     0.0000   ≤ 0.10     ✓ PASS
+  judge_truth_table_accuracy          1.0000   ≥ 0.90     ✓ PASS
+  webhook_valid_first_acceptance_rate 1.0000   ≥ 0.95     ✓ PASS
+  context_collector_accuracy          1.0000   ≥ 0.90     ✓ PASS
+
+All 9 component bars passed.  Unsafe-pass rate: 0.0% (0/39 must-catch cases).

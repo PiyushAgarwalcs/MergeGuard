@@ -1,5 +1,24 @@
 # Evaluation
 
+## Latest results (component eval, replay mode)
+
+Run against 706 cases covering all deterministic components. All 9 metric bars passed.
+
+| Metric | Result | Threshold |
+|--------|-------:|----------:|
+| Diff parser line accuracy | **1.000** (100%) | ≥ 1.00 |
+| Secret scanner recall | **1.000** (100%) | ≥ 0.95 |
+| Secret scanner false-positive rate | **0.000** (0%) | ≤ 0.02 |
+| Redactor removal rate | **1.000** (100%) | ≥ 1.00 |
+| Verifier fabricated-finding acceptance | **0.000** (0%) | = 0.00 |
+| Verifier genuine-finding rejection | **0.000** (0%) | = 0.00 |
+| Judge truth-table accuracy | **1.000** (100%) | ≥ 1.00 |
+| Webhook valid-delivery acceptance | **1.000** (100%) | ≥ 1.00 |
+| Context collector accuracy | **1.000** (100%) | ≥ 1.00 |
+| **Unsafe-pass rate** | **0 / 39** (0%) | = 0 |
+
+Ollama live consistency (8 cases, 5 repeats each): decision agreement **1.000**, finding Jaccard **0.925**, flip rate **0.000**.
+
 ## Running the suites
 
 From the repository root, use Python 3.11 with the project installed (`python -m pip install -e '.[dev]'`). Each run is persisted in `DATABASE_PATH` (by default `data/mergeguard.db`). Use `--mode replay` for offline evaluation; `--mode live` requires provider credentials and sends dataset diffs to that provider. Component, integration, robustness, regression, agent, pipeline, consistency, and ablation layers are registered in `evals/run.py`.
