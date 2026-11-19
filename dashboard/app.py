@@ -1,6 +1,16 @@
 # Dashboard landing page for MergeGuard evaluation runs and dataset review.
 # All displayed evaluation data comes from the local read-only SQLite store.
 
+import sys
+from pathlib import Path
+
+# Ensure project root and src/ are in sys.path
+_root = Path(__file__).resolve().parent.parent
+if str(_root) not in sys.path:
+    sys.path.insert(0, str(_root))
+if str(_root / "src") not in sys.path:
+    sys.path.insert(0, str(_root / "src"))
+
 import streamlit as st
 
 from dashboard.queries import list_eval_runs
